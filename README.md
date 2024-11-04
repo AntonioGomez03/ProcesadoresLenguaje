@@ -120,3 +120,60 @@ Descriptor que representa una porción de terreno dentro de una escena. Este CHU
 ```
 CHUNK global_chunk1 = CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects)
 ```
+
+## 📋 Listas
+En GeoCraft es posible utilizar listas para dos tipos específicos de descriptores: `CHUNK` y `GAMEOBJECT`. Una vez creada una lista de uno de estos tipos, se podrán añadir elementos correspondientes a ese tipo. Para agregar una nueva instancia de Chunk o Gameobject a la lista, se utilizará la palabra reservada `APPEND`, seguida de la lista a la que se desea añadir el elemento y del elemento que se desea añadir.
+
+**Ejemplo**
+```
+CHUNK global_chunk1 = CHUNK(0, 0, 20.0, 7.5, "src/textures grass", global_objects)
+LIST<CHUNK> global_chunks
+
+APPEND global_chunks global_chunk1
+```
+
+Además, la declaración de `APPEND` resulta especialmente útil para añadir descriptores de tipo `CHUNK` a una lista previamente declarada, particularmente cuando estos se crean dentro de un bucle. Esto permite generar múltiples chunks de manera eficiente y rápida.
+
+## 🔁 Bucles
+
+En nuestro lenguaje, existen dos tipos de bucles.
+
+### ➰ Bucle convencional
+GeoCraft presenta la posibilidad de utilizar bucles convencionales. La idea de este tipo de bucles consiste en realizar un número determinado de iteraciones desde un valor numerico `i` hasta otro valor `n`.
+
+**Ejemplo**
+```
+INT i = 0
+FOR i FROM 0 TO 5 {
+// Código del bucle
+}
+```
+
+### 🔃 Bucle para recorrer listas
+El segundo tipo de bucle está diseñado para recorrer listas de elementos. Este tipo de bucle es muy util a la hora de representar en una escena los chunks contenidos en una lista.
+
+**Ejemplo**
+```
+FOR c in CHUNKS{
+    // Código del bucle
+}
+```
+
+## 🧮 Operaciones básicas
+
+- **Asignación (=):** Asigna una expresión a una variable de un tipo de dato específico.
+- **Operaciones aritméticas:**
+    - **Suma (+):** Suma dos elementos aritméticos.
+    - **Resta (-):** Resta dos elementos aritméticos.
+    - **Multiplicación (*):** Multiplica dos elementos aritméticos.
+    - **División (/):** Divide dos elementos aritméticos.
+- **Operación ADD:** Esta operación sirve para representar un chunk dentro de una escena asegurando que solo se puedan utilizar chunks que hayan sido previamente definidos y declarados. Asimismo, se puede utlizar esta operacion dentro de un bucle para poder dibujar los multiples chunks de una lista.
+
+    ```
+    // La variable chunks referencia a una lista de chunks previamente creada
+
+    FOR c IN chunks {
+        ADD c
+    }
+    ```
+
