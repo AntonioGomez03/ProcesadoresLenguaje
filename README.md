@@ -35,3 +35,51 @@ El lenguaje también permitirá la generación de objetos prefabricados, como á
 La idea del proyecto consiste en tomar un código escrito en nuestro lenguaje específico y pasarlo a través de un procesador de lenguaje diseñado para este fin. Al ejecutar este proceso, se generará una carpeta que contendrá subcarpetas para cada escena definida en el código. Cada una de estas escenas se traducirá en un archivo de código con la extensión .cs, el cual, al ser ejecutado en Unity, creará automáticamente la escena correspondiente en el entorno 3D.
 ![image](https://github.com/user-attachments/assets/72d9df9c-a4ad-4697-b585-c3b3dc0447a9)
 <br><br><br>
+
+# Descripción del Lenguaje
+A continuación, se enumeran y explican los componentes del lenguaje.
+
+## Tipos de datos
+En GeoCraft, los tipos de datos son fundamentales para la manipulación y el almacenamiento de la información. Los tipos de datos que se utilizan en este lenguaje son los siguientes:
+
+### 🔢 INT
+El tipo `int` se utiliza para representar números enteros, tanto positivos como negativos. Este tipo es esencial para realizar operaciones artiméticas básicas, como suma, resta, multiplicación y división.
+
+**Características**
+- **Rango:** Puede almacenar valores comprendidos en el rango de  *-2,147,483,648* a *2,147,483,647*.
+- **Operaciones:** Soporta operaciones aritméticas básicas.
+
+**Ejemplo**
+```
+INT a = 3
+INT b = 2
+INT c = a + b  // Resultado: 5
+```
+
+### 📏 FLOAT
+El tipo `float` permite la representación de números decimales.
+
+**Características**
+- **Rango:** Puede almacenar valores comprendidos en el rango de *-3.402823E38* a *3.402823E38*.
+- **Operaciones:** Soporta operaciones aritméticas básicas.
+
+**Ejemplo**
+```
+FLOAT a = 23.5
+FLOAT b = -74.006
+FLOAT c = a + b  // Resultado: -50.506
+```
+
+### 📜 STRING
+El tipo `string`se utiliza para representar secuencias de caracteres o cadenas, permitiendo la manipulación de texto en el lenguaje.
+
+**Características**
+- **Contenido:** Puede contener letras, números, espacios, etc. que estén entre los símbolos `"`.
+- **Operaciones:** Soporta operaciones de concatenación.
+
+**Ejemplo**
+```
+STRING nombre = "Carlos"
+STRING apellido = "Pérez"
+STRING nombre_apellido = nombre + " " + apellido // Resultado: "Carlos Pérez"
+```
