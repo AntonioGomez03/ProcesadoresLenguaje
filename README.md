@@ -36,14 +36,14 @@ La idea del proyecto consiste en tomar un código escrito en nuestro lenguaje es
 ![image](https://github.com/user-attachments/assets/72d9df9c-a4ad-4697-b585-c3b3dc0447a9)
 <br><br><br>
 
-# Descripción del Lenguaje
+# 📝 Descripción del Lenguaje
 A continuación, se enumeran y explican los componentes del lenguaje.
 
-## Tipos de datos
+## 📚 Tipos de datos
 En GeoCraft, los tipos de datos son fundamentales para la manipulación y el almacenamiento de la información. Los tipos de datos que se utilizan en este lenguaje son los siguientes:
 
 ### 🔢 INT
-El tipo `int` se utiliza para representar números enteros, tanto positivos como negativos. Este tipo es esencial para realizar operaciones artiméticas básicas, como suma, resta, multiplicación y división.
+El tipo `INT` se utiliza para representar números enteros, tanto positivos como negativos. Este tipo es esencial para realizar operaciones artiméticas básicas, como suma, resta, multiplicación y división.
 
 **Características**
 - **Rango:** Puede almacenar valores comprendidos en el rango de  *-2,147,483,648* a *2,147,483,647*.
@@ -57,7 +57,7 @@ INT c = a + b  // Resultado: 5
 ```
 
 ### 📏 FLOAT
-El tipo `float` permite la representación de números decimales.
+El tipo `FLOAT` permite la representación de números decimales.
 
 **Características**
 - **Rango:** Puede almacenar valores comprendidos en el rango de *-3.402823E38* a *3.402823E38*.
@@ -71,7 +71,7 @@ FLOAT c = a + b  // Resultado: -50.506
 ```
 
 ### 📜 STRING
-El tipo `string`se utiliza para representar secuencias de caracteres o cadenas, permitiendo la manipulación de texto en el lenguaje.
+El tipo `STRING`se utiliza para representar secuencias de caracteres o cadenas, permitiendo la manipulación de texto en el lenguaje.
 
 **Características**
 - **Contenido:** Puede contener letras, números, espacios, etc. que estén entre los símbolos `"`.
@@ -82,4 +82,41 @@ El tipo `string`se utiliza para representar secuencias de caracteres o cadenas, 
 STRING nombre = "Carlos"
 STRING apellido = "Pérez"
 STRING nombre_apellido = nombre + " " + apellido // Resultado: "Carlos Pérez"
+```
+
+## 🏷️ Descriptores
+Los descriptores funcionan como bloques para la definición de los datos (presentando un enfoque muy parecido a la programación orientada a objetos). Cada descriptor está compuesto por una serie de atributos que permiten describir sus características. 
+
+Existen 2 tipos de descriptores: Chunk y Gameobject.
+
+### 🌴 GAMEOBJECT
+El descriptor `GAMEOBJECT` está diseñado para definir modelos 3D que se dibujarán de manera procedural en el terreno, como árboles, rocas, hierba u otros elementos decorativos del entorno. Este descriptor permite especificar ciertos atributos que controlan la apariencia y distribución de estos objetos dentro del terreno.
+
+**Atributos**
+- **Ruta del modelo:** Define la ubicación del modelo 3D que se va a utilizar. En este caso, el ID "src/models/tree" se refiere a un archivo de un modelo 3D en esa ruta específica.
+- **Densidad:** Define la densidad del objeto, lo que significa cuántos de estosobjetos se generarán en el área correspondiente del terreno. Un valor de 56 indica que habrá 56 instancias del objeto dispersas por el chunk.
+- **Escala:** Este atributo controla la escala del modelo. Sin embargo, si se desea que algunos sean más grandes y otros más pequeños, creando una distribución más natural, se deberán definir los atributos MAX_SCALE y MIN_SCALE.
+
+**Ejemplo**
+```
+GAMEOBJECT object1 = GAMEOBJECT("src/models/tree", 10, 2.0)
+
+// Ejemplo de definición de Gameobject con MAX_SCALE y MIN_SCALE
+GAMEOBJECT object2 = GAMEOBJECT("src/models/rock", 5, 0.5, 1.5)
+```
+
+### 🧩 CHUNK
+Descriptor que representa una porción de terreno dentro de una escena. Este CHUNK tiene varios atributos clave que definen su apariencia y estructura, así como la posibilidad de contener objetos adicionales.
+
+**Atributos**
+- **Posición x:** Posición X dentro de la matriz de chunks de la escena.
+- **Posición y:** Posición Y dentro de la matriz de chunks de la escena.
+- **Escala:** Escala del Ruido Perlin para controlar el detalle (transición suave o abrupta entre montaña y llano).
+- **Multiplicador de altura:** Multiplicador de altura para ajustar la elevación del terreno.
+- **Textura:** Cadena de texto que hace referencia a la textura del terreno en el proyecto.
+- **Lista de objetos:** Lista de objetos dentro del chunk (ver apartado de listas de descriptores).
+
+**Ejemplo**
+```
+CHUNK global_chunk1 = CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects)
 ```
