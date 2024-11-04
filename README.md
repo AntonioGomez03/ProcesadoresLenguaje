@@ -177,3 +177,21 @@ FOR c in CHUNKS{
     }
     ```
 
+# 🚀 Tecnologías Utilizadas
+
+[![Python][Python-logo]][Python-url]
+[![Java][Java-logo]][Java-url]
+[![JFlex][JFlex-logo]][JFlex-url]
+[![ANTLR4][ANTLR4-logo]][ANTLR4-url]
+[![CUP][CUP-logo]][CUP-url]
+
+[Python-logo]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
+[Python-url]: https://www.python.org
+[Java-logo]: https://img.shields.io/badge/Java-DD0000?style=for-the-badge&logo=openjdk&logoColor=white
+[Java-url]: https://www.java.com
+[ANTLR4-logo]: https://img.shields.io/badge/ANTLR4-A80000?style=for-the-badge&logo=openjdk&logoColor=white
+[ANTLR4-url]: https://www.antlr.org
+[CUP-logo]: https://img.shields.io/badge/CUP-8E3A2D?style=for-the-badge&logo=openjdk&logoColor=white
+[CUP-url]: http://www2.cs.tum.edu/projects/cup/
+[JFlex-logo]: https://img.shields.io/badge/JFlex-1E7D3A?style=for-the-badge&logo=openjdk&logoColor=white
+[JFlex-url]: http://jflex.de
