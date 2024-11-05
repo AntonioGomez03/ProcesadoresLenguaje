@@ -1,0 +1,94 @@
+/* --------------------------Seccion codigo-usuario ------------------------*/
+import java.io.*;
+
+%%
+
+/* -------------------------Seccion de opciones y declaraciones ------------------------- */
+%class analisisLexico
+
+
+/* estado del analizador lexico*/
+%state COMMENT
+
+%standalone 
+
+/* Posibilitar acceso a la columna y fila actual de analisis*/ 
+
+%line
+
+%column
+
+/* Habilitar la compatibilidad con el interfaz CUP para el generador sint�ctico 
+ 
+%cup */
+
+
+/*---------------------------Macros--------------------------------*/
+
+ID = [a-zA-Z][a-zA-Z0-9_]*
+INT_LITERAL = [0-9]+
+FLOAT_LITERAL = [0-9]+\.[0-9]+
+STRING_LITERAL = \"([^\"\n\r])*\" 
+OP_ARIT = "+"|"-"|"*"|"/"
+START_COMMENT = "/*" 
+END_COMMENT = "*/"
+NL  = \n |\r|\r\n
+SPACE = " "
+TAB = \t  
+
+%%
+/* ------------------------Seccion de reglas y acciones ----------------------*/
+<YYINITIAL> {
+
+DEFINE { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
+SETUP { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+WORLD { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+ADD { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+APPEND { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+SCENE { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+FOR { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+FROM { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+TO { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+IN { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+CHUNK { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+GAMEOBJECT { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+LIST { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+INT {System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+FLOAT { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+STRING { System.out.println("Token  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{ID} { System.out.println("Token ID  < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{INT_LITERAL} { System.out.println("Token INT_LITERAL < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{FLOAT_LITERAL} { System.out.println("Token FLOAT_LITERAL < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{STRING_LITERAL} { System.out.println("Token STRING_LITERAL < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{OP_ARIT} { System.out.println("Token OP_ARIT < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{START_COMMENT}  {System.out.println("Comienzo de comentario encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));yybegin(COMMENT);}
+\( { System.out.println("Token LPAREN < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\) { System.out.println("Token RPAREN < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\{ { System.out.println("Token LBRACE < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\} { System.out.println("Token RBRACE < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\[ { System.out.println("Token LSQUARE < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\] { System.out.println("Token RSQUARE < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+, { System.out.println("Token COMMA < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\< { System.out.println("Token LT < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+\> { System.out.println("Token GT < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+{TAB} {/* ignora los tabuladores */}
+{NL} {/* ignora los saltos de linea */}
+{SPACE} {/* ignora los espacios blancos */} 
+= { System.out.println("Token ASSIGN < " +yytext()+ " > encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
+. {System.out.println("Token No Valido < " +yytext()+ " >linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
+
+}/* fin YYinitial */
+ 
+<COMMENT> {
+{NL}        {/* ignoar salto de lineas */ }
+{SPACE}     {/* ignora los espacios en blanco */ }
+{TAB}       {/* ignora tabuladores */}
+{END_COMMENT} {System.out.println("Fin del comentario encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));yybegin(YYINITIAL);}
+. {} 
+}
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+/* Definición de objetos, variables y chunks globales */ 
+
+DEFINE SETUP(){
+    /* Definición de variables globales */
+    INT WIDTH_CHUNK = 20
+    INT LENGH_CHUNK
+    LENGH_CHUNK = 20  /* Cambiar */
+
+	/* Definición de objetos globales */
+    GAMEOBJECT global_object1 = GAMEOBJECT("src/models/tree", 10, 2.0)
+    GAMEOBJECT global_object2 = GAMEOBJECT("src/models/rock", 5, 1.0)
+    LIST<GAMEOBJECT> global_objects = [global_object1, global_object2]
+
+    /* Ejemplo de APPEND */
+    APPEND global_objects GAMEOBJECT("src/models/house", 10, 2.0)
+
+    /* Ejemplo de APPEND */
+    GAMEOBJECT global_object3 = GAMEOBJECT("src/models/car", 10, 2.0)
+    APPEND global_objects global_object3
+
+    /* Ejemplo de CHUNK */
+    CHUNK global_chunk1 =  CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects)
+    }
+
+
+/* Definición de escenas */
+
+DEFINE WORLD("Mi Mundo"){
+
+    /* Definición de escena */
+	DEFINE SCENE("Escena 1", WIDTH_CHUNK, LENGH_CHUNK){
+        /* Definición de objetos */
+        GAMEOBJECT object1 = GAMEOBJECT("src/models/tree", 15, 1.8)
+        GAMEOBJECT object2 = GAMEOBJECT("src/models/rock", 2, 1.2)
+        LIST<GAMEOBJECT> objects = [object1, object2]
+
+        /* Creacion de 10 chunks con arboles y rocas */
+        LIST<CHUNK> chunks
+		FOR i FROM 0 TO 10 {
+            CHUNK c = CHUNK(0,i,15.0, 10.0, "src/textures/mountain", objects)
+            APPEND chunks c
+        }
+ 
+        /* Añadir chunks */
+        FOR c IN chunks {
+            ADD c
+        }
+        /* Añadir un chunk global */
+        ADD global_chunk
+	}
+
+    /* Definición de escena */
+    DEFINE SCENE("Escena 2", WIDTH_CHUNK + 10, LENGH_CHUNK + 10){
+        /* Definición de variables */
+        INT n = 5
+
+        /* Añadir un chunk global */
+        ADD global_chunk
+	}
+}
+
+
