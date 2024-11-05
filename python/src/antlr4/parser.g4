@@ -16,7 +16,7 @@ define_scene:
 
 statement:
 	assignment
-	| define list
+	| define_list
 	| append_statement
 	| for_loop_number
 	| for_loop_list
@@ -25,13 +25,13 @@ statement:
 
 chunk_constructor: CHUNK LPAREN (ID | INT_LITERAL) COMMA (ID | INT_LITERAL) COMMA (ID | FLOAT_LITERAL) COMMA (ID | FLOAT_LITERAL) COMMA (ID | STRING_LITERAL) COMMA (ID | array) RPAREN;
 
-gameobject_constructor: GAMEOBJECT LPAREN (ID | STRING_LITERAL) COMMA (ID | INT_LITERAL) COMMA (ID | FLOAT_LITERAL) COMMA (ID | FLOAT_LITERAL) RPAREN;
+gameobject_constructor: GAMEOBJECT LPAREN (ID | STRING_LITERAL) COMMA (ID | INT_LITERAL) COMMA (ID | FLOAT_LITERAL) COMMA (ID | FLOAT_LITERAL) RPAREN
 						| GAMEOBJECT LPAREN (ID | STRING_LITERAL) COMMA (ID | INT_LITERAL) COMMA (ID | FLOAT_LITERAL) RPAREN;
 
 define_list: (LIST LT (CHUNK | GAMEOBJECT) GT | ) ID ASSIGN array;
 
-array: LSQUARE (ID | chunk_constructor | gameobject_constructor)* RSQUARE;
-
+array: LSQUARE (ID | chunk_constructor | gameobject_constructor) (COMMA (ID | chunk_constructor | gameobject_constructor))* RSQUARE
+	| LSQUARE RSQUARE;
 
 append_statement: APPEND ID (ID | gameobject_constructor | chunk_constructor);
 
