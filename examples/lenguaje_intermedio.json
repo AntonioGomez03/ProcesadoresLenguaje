@@ -1,0 +1,65 @@
+{
+    "world": {
+      "name": "FantasyWorld",
+      "scenes": [
+        {
+          "name": "Forest",
+          "chunks": [
+            {
+              "pos_x": 1,
+              "pos_y": 2,
+              "scale": 1.5,
+              "height": 10,
+              "texture": "tree_texture.png",
+              "gameobjects": [
+                {
+                  "model": "src/models/tree",
+                  "density": 10,
+                  "scale": 2.0
+                },
+                {
+                  "model": "src/models/rock",
+                  "min_scale": 0.5,
+                  "max_scale": 1.5
+                }
+              ]
+            },
+            {
+              "pos_x": 30,
+              "pos_y": 40,
+              "scale": 2.0,
+              "height": 450,
+              "texture": "rock_texture.png",
+              "gameobjects": [
+                {
+                  "model": "src/models/tree",
+                  "density": 15,
+                  "scale": 1.8
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Mountain",
+          "chunks": [
+            {
+              "pos_x": 15,
+              "pos_y": 25,
+              "scale": 1.2,
+              "height": 500,
+              "texture": "snow_texture.png",
+              "gameobjects": [
+                {
+                  "model": "src/models/rock",
+                  "min_scale": 0.7,
+                  "max_scale": 1.2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+  
