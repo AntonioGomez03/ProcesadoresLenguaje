@@ -145,3 +145,37 @@ body {
 }
 
 
+/* Caja de Contenido Markdown */
+.markdown-content {
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 4rem;
+    padding: 250px;
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-size: 1.2em;
+    line-height: 1.6;
+    overflow-y: auto;  /* Permite el scroll si el contenido es más grande que el área visible */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+
+    /* Aplicar la animación de desvanecimiento */
+    animation: fadeIn 1.2s ease-out forwards;
+}
+
+/* Estilo para los encabezados dentro del contenido Markdown */
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    color: #00ff6a; /* Verde neón en los encabezados */
+}
+
+/* Estilo para los enlaces dentro del contenido Markdown */
+.markdown-content a {
+    color: #00ff6a; /* Verde neón en enlaces */
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline; /* Subrayado en hover */
+}
