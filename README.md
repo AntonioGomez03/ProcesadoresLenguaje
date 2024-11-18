@@ -190,6 +190,76 @@ FOR c in CHUNKS{
     }
     ```
 
+# 🛠️ Estructura principal de un programa GeoCraft
+En un programa *GeoCraft*, se distinguen dos bloques principales: *setup* y *world*.
+
+## ⚙️ Setup
+Este bloque comienza con las palabras reservadas **DEFINE SETUP()** y se centra en la definición de objetos, variables y chunks globales que el usuario puede utilizar en las diferentes escenas que desee generar.
+
+**Ejemplo**
+```
+DEFINE SETUP(){
+// Definición de variables globales
+INT WIDTH_CHUNK = 20
+INT LENGH_CHUNK = 
+
+// Definición de objetos globales
+GAMEOBJECT global_object1 = GAMEOBJECT("src/models/tree", 10, 2.0)
+GAMEOBJECT global_object2 = GAMEOBJECT("src/models/rock", 5, 1.0)
+LIST<GAMEOBJECT> global_objects = [global_object1, global_object2]
+
+// Ejemplo de APPEND
+APPEND global_objects GAMEOBJECT("src/models/house", 10, 2.0)
+
+// Ejemplo de APPEND
+GAMEOBJECT global_object3 = GAMEOBJECT("src/models/car", 10, 2.0)
+APPEND global_objects global_object3
+
+// Ejemplo de CHUNK
+CHUNK global_chunk1 = CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects)
+}
+```
+
+## 🗺️ World
+El bloque **World** representa la metáfora del proyecto, actuando como la estructura organizativa principal que contiene todas las escenas del entorno. Este bloque comienza con las palabras reservadas **DEFINE WORLD(nombre)**, siendo *nombre* un parámetro que indica el nombre de la carpeta del proyecto generado.
+
+Dentro de este bloque, se definen una o varias escenas, donde cada una de ellas corresponde a un archivo *.cs* individual. En estas escenas se llevan a cabo las definiciones de los chunks, así como la lógica del sistema, que incluye la creación de objetos, la utilización de bucles, y la gestión de listas. De este modo, **WORLD** sirve como un contenedor que agrupa y organiza todos los componentes necesarios para la contrucción y funcionamiento del entorno virtual.
+
+**Ejemplo**
+```
+DEFINE WORLD("Mi Mundo"){
+// Definición de escena
+DEFINE SCENE("Escena 1", WIDTH_CHUNK, LENGH_CHUNK){
+// Definición de objetos
+GAMEOBJECT object1 = GAMEOBJECT("src/models/tree", 15, 1.8)
+GAMEOBJECT object2 = GAMEOBJECT("src/models/rock", 2, 1.2)
+LIST<GAMEOBJECT> objects = [object1, object2]
+
+// Creacion de 10 chunks con arboles y rocas
+LIST<CHUNK> chunks
+FOR i FROM 0 TO 10 {
+CHUNK c = CHUNK(0,i,15.0, 10.0, "src/textures/mountain", objects)
+APPEND chunks c
+}
+
+// Añaden los chunks generados previamente
+FOR c IN chunks {
+ADD c
+}
+
+// Añadir un chunk global
+ADD global_chunk
+}
+
+DEFINE SCENE("Escena 2", WIDTH_CHUNK + 10, LENGH_CHUNK + 10){
+// Definición de variables
+INT n = 5
+// Añadir un chunk global
+ADD global_chunk
+}
+}
+```
+
 # 🚀 Tecnologías Utilizadas
 
 [![Python][Python-logo]][Python-url]
