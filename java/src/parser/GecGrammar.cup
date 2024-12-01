@@ -1,0 +1,189 @@
+package gec; 
+import java_cup.runtime.*; 
+import java.io.*; 
+
+parser code {: 
+    public static void main(String args[]) throws Exception {
+
+        FileInputStream stream = new java.io.FileInputStream(args[0]); 
+        Reader reader = new java.io.InputStreamReader(stream);
+        try{
+
+			new parser(new Yylex(reader)).parse();
+		}
+		catch (Exception e) {
+			System.out.println("¡¡ El análisis es INCORRECTO!!");
+			System.exit(1);
+		}
+		System.out.println("¡¡ El Análisis es Correcto !!");
+	
+		}
+:}
+
+/* ------------Declaracion de la lista de simbolos de la gramatica-----------*/
+
+terminal DEFINE;
+terminal SETUP;
+terminal WORLD; 
+terminal ADD; 
+terminal APPEND; 
+terminal SCENE; 
+terminal FOR; 
+terminal FROM; 
+terminal TO; 
+terminal IN;
+terminal CHUNK;  
+terminal GAMEOBJECT; 
+terminal LIST;
+terminal INT;
+terminal FLOAT;
+terminal STRING; 
+terminal ID;
+terminal INT_LITERAL;
+terminal FLOAT_LITERAL;
+terminal STRING_LITERAL;
+terminal OP_ARIT; 
+terminal LPAREN;
+terminal RPAREN;
+terminal LBRACE;
+terminal RBRACE;
+terminal LSQUARE;
+terminal RSQUARE;
+terminal COMMA;
+terminal LT;
+terminal GT;
+terminal ASSIGN;    
+
+non terminal program; 
+non terminal define_setup; 
+non terminal define_world; 
+non terminal define_scene;
+non terminal statement;
+non terminal statement_list; 
+non terminal chunck_constuctor;  
+non terminal gameobject_constructor; 
+non terminal define_list; 
+non terminal array; 
+non terminal append_statement; 
+non terminal add_statement; 
+non terminal for_loop_number; 
+non terminal for_loop_list; 
+non terminal assignment; 
+non terminal expression; 
+non terminal expression_aux; 
+non terminal declaration; 
+non terminal define_scene_list;
+non terminal id_or_int_literal; 
+non terminal id_or_float_literal;
+non terminal id_or_string_literal; 
+non terminal id_or_array;
+non terminal arithmetic_expression;
+non terminal chunk_or_gameobject; 
+non terminal rest_array;
+
+
+program ::= define_setup define_world; 
+
+define_setup ::= DEFINE SETUP LPAREN RPAREN LBRACE statement_list RBRACE 
+                | DEFINE SETUP LPAREN RPAREN LBRACE RBRACE;
+
+statement_list ::= statement statement_list
+                | statement;
+
+define_world ::=  DEFINE WORLD LPAREN id_or_string_literal RPAREN LBRACE define_scene_list RBRACE 
+                | DEFINE WORLD LPAREN id_or_string_literal RPAREN LBRACE RBRACE;
+ 
+define_scene_list ::= define_scene define_scene_list 
+                    | define_scene ;
+
+define_scene ::= DEFINE SCENE LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_int_literal RPAREN LBRACE statement_list RBRACE
+                | DEFINE SCENE LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_int_literal RPAREN LBRACE RBRACE; 
+
+statement ::= assignment
+	| define_list
+	| append_statement
+	| for_loop_number
+	| for_loop_list
+	| declaration
+	| add_statement;
+
+chunck_constuctor ::= CHUNK LPAREN id_or_int_literal COMMA id_or_int_literal COMMA id_or_float_literal COMMA id_or_float_literal COMMA id_or_string_literal COMMA id_or_array RPAREN; 
+
+gameobject_constructor ::= GAMEOBJECT LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_float_literal COMMA id_or_float_literal RPAREN
+                        |  GAMEOBJECT LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_float_literal RPAREN; 
+
+define_list ::= LIST LT chunk_or_gameobject GT ID ASSIGN array
+                | ID ASSIGN array; 
+
+chunk_or_gameobject ::= CHUNK 
+                    | GAMEOBJECT;
+
+array ::= LSQUARE chunck_constuctor rest_array RSQUARE
+        | LSQUARE gameobject_constructor rest_array RSQUARE
+        | LSQUARE ID rest_array RSQUARE
+        | LSQUARE chunck_constuctor RSQUARE
+        | LSQUARE gameobject_constructor RSQUARE
+        | LSQUARE ID RSQUARE
+        | LSQUARE RSQUARE ; 
+
+rest_array ::= COMMA chunck_constuctor rest_array
+            |  COMMA ID rest_array
+            |  COMMA gameobject_constructor rest_array
+            |  COMMA chunck_constuctor 
+            |  COMMA ID
+            |  COMMA gameobject_constructor;
+
+append_statement ::= APPEND ID ID 
+                | APPEND ID gameobject_constructor
+                | APPEND ID chunck_constuctor;
+
+add_statement ::= ADD ID 
+                | ADD chunck_constuctor; 
+
+for_loop_number ::= FOR ID FROM INT_LITERAL TO INT_LITERAL LBRACE statement_list RBRACE 
+                |   FOR ID FROM INT_LITERAL TO INT_LITERAL LBRACE RBRACE; 
+
+for_loop_list ::= FOR ID IN ID LBRACE statement_list RBRACE 
+                | FOR ID IN ID LBRACE RBRACE; 
+
+assignment ::= 
+    INT ID ASSIGN expression
+    | STRING ID ASSIGN expression
+    | FLOAT ID ASSIGN expression 
+    | ID ASSIGN expression 
+    | CHUNK ID ASSIGN chunck_constuctor 
+    | ID ASSIGN chunck_constuctor
+    | GAMEOBJECT ID ASSIGN gameobject_constructor
+    | ID ASSIGN gameobject_constructor;
+
+expression ::= expression_aux arithmetic_expression
+            | expression_aux;
+
+arithmetic_expression ::= OP_ARIT expression_aux arithmetic_expression
+                        | OP_ARIT expression_aux;
+
+expression_aux ::= STRING_LITERAL
+                | INT_LITERAL 
+                | FLOAT_LITERAL 
+                | ID 
+                | LPAREN expression RPAREN; 
+
+declaration ::= INT ID 
+            | STRING ID 
+            | FLOAT ID 
+            | CHUNK ID 
+            | GAMEOBJECT ID 
+            | LIST LT chunk_or_gameobject GT ID;   
+
+id_or_int_literal ::= ID 
+                    | INT_LITERAL; 
+
+id_or_float_literal ::= ID 
+                    | FLOAT_LITERAL; 
+
+id_or_string_literal ::= ID 
+                    | STRING_LITERAL; 
+
+id_or_array ::= ID  
+            | array; 
+
