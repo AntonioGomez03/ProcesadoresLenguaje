@@ -35,6 +35,8 @@ public class {scene["name"]} : MonoBehaviour {{
     public List<GameObject> chunk_list = new List<GameObject>();
     public List<int> pos_x_list = new List<int>();
     public List<int> pos_y_list = new List<int>();
+    public unirTerrenosScript unirTerrenosScript;
+
 
     void Start() {{
 """
@@ -55,6 +57,11 @@ public class {scene["name"]} : MonoBehaviour {{
         chunk_{pos_x}_{pos_y}.transform.localScale = new Vector3({width_chunk}f, 1f, {length_chunk}f);
         chunk_{pos_x}_{pos_y}.name = "Chunk_{scene_name}_{pos_x}_{pos_y}";
 
+        // Añadir chunk a la lista y sus coordenadas
+        chunk_list.Add(chunk_{pos_x}_{pos_y});
+        pos_x_list.Add({pos_x})
+        pos_y_list.Add({pos_y});
+
         // Asignar y configurar el script SimpleTerrainGenerator al chunk
         SimpleTerrainGenerator terrainGen_{pos_x}_{pos_y} = chunk_{pos_x}_{pos_y}.AddComponent<SimpleTerrainGenerator>();
         terrainGen_{pos_x}_{pos_y}._filter = chunk_{pos_x}_{pos_y}.GetComponent<MeshFilter>();
@@ -62,7 +69,7 @@ public class {scene["name"]} : MonoBehaviour {{
         terrainGen_{pos_x}_{pos_y}.heightMultiplier = {height_multiplier}f;
 
         // Asignar textura al chunk, si existe
-        Material material_{pos_x}_{pos_y} = AssetDatabase.LoadAssetAtPath<Material>("{texture_path}.mat");
+        Material material_{pos_x}_{pos_y} = AssetDatabase.LoadAssetAtPath<Material>("{texture_path}.mtlx");
         if (material_{pos_x}_{pos_y} != null)
         {{
             chunk_{pos_x}_{pos_y}.GetComponent<Renderer>().material = material_{pos_x}_{pos_y};
@@ -91,63 +98,16 @@ public class {scene["name"]} : MonoBehaviour {{
                     min_scale = gameobject["min_scale"]
                     max_scale = gameobject["max_scale"]
 
-            
-
-
-    # Suavizar corte entre los chunks#
+    # Suavizar corte entre los chunks
     cs_content += """
-        // Ajuste de alturas en los bordes de los chunks
-        for (int i = 0; i < chunk_list.Count; i++)
-        {
-            for (int e = i + 1; e < chunk_list.Count; e++){
-                if (i != e)
-                {
-                    // Posiciones relativas
-                    int pos_x_i = pos_x_list[i];
-                    int pos_y_i = pos_y_list[i];
-                    int pos_x_e = pos_x_list[e];
-                    int pos_y_e = pos_y_list[e];
+        // Crear un objeto vacío en la escena
+        GameObject emptyObject = new GameObject("UnirTerrenosManager");
 
-                    // Comprobar si son vecinos en el vértice (vertex neighbors)
-                    bool areVertexNeighbors = Mathf.Abs(pos_x_i - pos_x_e) == 1 && Mathf.Abs(pos_y_i - pos_y_e) == 1;
-
-                    // Comprobar si son vecinos en el borde (edge neighbors)
-                    bool areEdgeNeighbors = false;
-                    string edgeType = "";
-                    // Vecino al Este/Oeste (misma fila, posiciones X diferentes)
-                    if (pos_y_i == pos_y_e && Mathf.Abs(pos_x_i - pos_x_e) == 1)
-                    {
-                        areEdgeNeighbors = true;
-                        edgeType = (pos_x_i < pos_x_e) ? "Este" : "Oeste";
-                    }
-                    // Vecino al Norte/Sur (misma columna, posiciones Y diferentes)
-                    else if (pos_x_i == pos_x_e && Mathf.Abs(pos_y_i - pos_y_e) == 1)
-                    {
-                        areEdgeNeighbors = true;
-                        edgeType = (pos_y_i < pos_y_e) ? "Norte" : "Sur";
-                    }
-
-                    // Procesamiento si son vecinos por arista
-                    if (areEdgeNeighbors)
-                    {
-                        // Debug.Log($"Chunks {i} y {e} son vecinos en el borde.{edgeType}"); -- pruebas
-
-                        // Mesh de cada chunk
-                        Mesh mesh_i = chunk_list[i].GetComponent<MeshFilter>().mesh;
-                        Mesh mesh_e = chunk_list[e].GetComponent<MeshFilter>().mesh;
-
-                        // ME HE QUEDADO POR AQUI..., TODO GENIAL..., PERO ESTO HAY QUE REVISARLO :) 
-
-                    }
-
-                    // Procesamiento si son vecinos por vértice
-                    if (areVertexNeighbors)
-                    {
-                        // Debug.Log($"Chunks {i} y {e} son vecinos en el vértice."); -- pruebas
-                    }
-                }
-            }
-        }
+        // Añadir el script unirTerrenosScript al objeto vacío
+        unirTerrenosScript unir_terrenos = emptyObject.AddComponent<unirTerrenosScript>();
+        unir_terrenos.chunk_list = chunk_list;
+        unir_terrenos.pos_x_list = pos_x_list;
+        unir_terrenos.pos_y_list = pos_y_list;
     }
 }
     """

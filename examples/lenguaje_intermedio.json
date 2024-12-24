@@ -12,7 +12,7 @@
               "pos_y": 0,
               "scale": 4,
               "height_multiplier": 70,
-              "texture": "Assets/Textures/rojo",
+              "texture": "Assets/Textures/grass",
               "gameobjects": [
                 {
                   "model": "src/models/tree",
