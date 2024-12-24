@@ -12,7 +12,7 @@
               "pos_y": 0,
               "scale": 4,
               "height_multiplier": 70,
-              "texture": "Assets/Textures/grass",
+              "texture": "Assets/Ground textures pack/Ground & rocks 02/Ground & rocks pattern 02",
               "gameobjects": [
                 {
                   "model": "src/models/tree",
@@ -32,7 +32,7 @@
               "pos_y": 0,
               "scale": 2,
               "height_multiplier": 20,
-              "texture": "Assets/Textures/rojo",
+              "texture": "Assets/Ground textures pack/Grass & dead leafs 01/Grass & dead leafs pattern 01",
               "gameobjects": [
                 {
                   "model": "src/models/tree",
@@ -46,7 +46,7 @@
               "pos_y": 1,
               "scale": 4,
               "height_multiplier": 80,
-              "texture": "Assets/Textures/rojo",
+              "texture": "Assets/Ground textures pack/Grass 03/Grass pattern 03",
               "gameobjects": [
                 {
                   "model": "src/models/tree",

@@ -20,7 +20,7 @@ public class Mountain : MonoBehaviour {
 
         // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_0_100);
-        pos_x_list.Add(0)
+        pos_x_list.Add(0);
         pos_y_list.Add(100);
 
         // Asignar y configurar el script SimpleTerrainGenerator al chunk
@@ -30,10 +30,11 @@ public class Mountain : MonoBehaviour {
         terrainGen_0_100.heightMultiplier = 500f;
 
         // Asignar textura al chunk, si existe
-        Material material_0_100 = AssetDatabase.LoadAssetAtPath<Material>("snow_texture.png.mtlx");
+        Material material_0_100 = AssetDatabase.LoadAssetAtPath<Material>("snow_texture.png.mat");
         if (material_0_100 != null)
         {
             chunk_0_100.GetComponent<Renderer>().material = material_0_100;
+            AdjustTextureScale(chunk_0_100, material_0_100);  // Ajustamos la escala de la textura
         }
         else
         {
@@ -46,13 +47,27 @@ public class Mountain : MonoBehaviour {
         pos_y_list.Add(1);
 
         // Crear un objeto vacío en la escena
-        GameObject emptyObject = new GameObject("UnirTerrenosManager");
+        GameObject emptyObject = new GameObject("mergeTerrainScript");
 
         // Añadir el script unirTerrenosScript al objeto vacío
         unirTerrenosScript unir_terrenos = emptyObject.AddComponent<unirTerrenosScript>();
         unir_terrenos.chunk_list = chunk_list;
         unir_terrenos.pos_x_list = pos_x_list;
         unir_terrenos.pos_y_list = pos_y_list;
+
+        // Función para ajustar la escala de la textura en función del tamaño del chunk
+        void AdjustTextureScale(GameObject chunk, Material material)
+        {
+            // Tamaño base del plano sin escalado
+            Vector3 baseSize = chunk.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+
+            // Tamaño final del chunk, tomando en cuenta la escala
+            Vector3 finalSize = new Vector3(baseSize.x * chunk.transform.localScale.x, baseSize.y * chunk.transform.localScale.y, baseSize.z * chunk.transform.localScale.z);
+
+            // Ajustamos la escala de la textura en función del tamaño final del chunk
+            // Dividimos por el tamaño base de la textura (suponemos que es de 1x1 en la textura original)
+            material.mainTextureScale = new Vector2(finalSize.x / baseSize.x, finalSize.z / baseSize.z);
+        }
     }
 }
     

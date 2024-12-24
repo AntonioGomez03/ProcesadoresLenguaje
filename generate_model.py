@@ -1,7 +1,10 @@
+# Libraries
 import json
 
-
-
+'''
+    Method name: main
+    Function: itera sobre cada "scene" para generar su script
+'''
 def main():
     # Cargar archivo JSON 
     with open('examples/lenguaje_intermedio.json', 'r') as file:
@@ -17,8 +20,10 @@ def main():
 
 
 
-
-# Método para generar el script de cada escena
+'''
+    Method name: generate_script
+    Function: método para generar el script de cada escena
+'''
 def generate_script(scene):
     scene_name = scene["name"]
     width_chunk = scene["width_chunk"]
@@ -59,7 +64,7 @@ public class {scene["name"]} : MonoBehaviour {{
 
         // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_{pos_x}_{pos_y});
-        pos_x_list.Add({pos_x})
+        pos_x_list.Add({pos_x});
         pos_y_list.Add({pos_y});
 
         // Asignar y configurar el script SimpleTerrainGenerator al chunk
@@ -69,10 +74,11 @@ public class {scene["name"]} : MonoBehaviour {{
         terrainGen_{pos_x}_{pos_y}.heightMultiplier = {height_multiplier}f;
 
         // Asignar textura al chunk, si existe
-        Material material_{pos_x}_{pos_y} = AssetDatabase.LoadAssetAtPath<Material>("{texture_path}.mtlx");
+        Material material_{pos_x}_{pos_y} = AssetDatabase.LoadAssetAtPath<Material>("{texture_path}.mat");
         if (material_{pos_x}_{pos_y} != null)
         {{
             chunk_{pos_x}_{pos_y}.GetComponent<Renderer>().material = material_{pos_x}_{pos_y};
+            AdjustTextureScale(chunk_{pos_x}_{pos_y}, material_{pos_x}_{pos_y});  // Ajustamos la escala de la textura
         }}
         else
         {{
@@ -101,13 +107,27 @@ public class {scene["name"]} : MonoBehaviour {{
     # Suavizar corte entre los chunks
     cs_content += """
         // Crear un objeto vacío en la escena
-        GameObject emptyObject = new GameObject("UnirTerrenosManager");
+        GameObject emptyObject = new GameObject("mergeTerrainScript");
 
         // Añadir el script unirTerrenosScript al objeto vacío
         unirTerrenosScript unir_terrenos = emptyObject.AddComponent<unirTerrenosScript>();
         unir_terrenos.chunk_list = chunk_list;
         unir_terrenos.pos_x_list = pos_x_list;
         unir_terrenos.pos_y_list = pos_y_list;
+
+        // Función para ajustar la escala de la textura en función del tamaño del chunk
+        void AdjustTextureScale(GameObject chunk, Material material)
+        {
+            // Tamaño base del plano sin escalado
+            Vector3 baseSize = chunk.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+
+            // Tamaño final del chunk, tomando en cuenta la escala
+            Vector3 finalSize = new Vector3(baseSize.x * chunk.transform.localScale.x, baseSize.y * chunk.transform.localScale.y, baseSize.z * chunk.transform.localScale.z);
+
+            // Ajustamos la escala de la textura en función del tamaño final del chunk
+            // Dividimos por el tamaño base de la textura (suponemos que es de 1x1 en la textura original)
+            material.mainTextureScale = new Vector2(finalSize.x / baseSize.x, finalSize.z / baseSize.z);
+        }
     }
 }
     """
@@ -116,6 +136,7 @@ public class {scene["name"]} : MonoBehaviour {{
     with open(cs_output_path, 'w') as file:
         file.write(cs_content)
 
-    # ñenguele, ma
+
+
 if __name__ == "__main__":
     main()

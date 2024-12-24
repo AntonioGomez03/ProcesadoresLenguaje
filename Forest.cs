@@ -18,9 +18,9 @@ public class Forest : MonoBehaviour {
         chunk_0_0.transform.localScale = new Vector3(10f, 1f, 10f);
         chunk_0_0.name = "Chunk_Forest_0_0";
 
-        // Aï¿½adir chunk a la lista y sus coordenadas
+        // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_0_0);
-        pos_x_list.Add(0)
+        pos_x_list.Add(0);
         pos_y_list.Add(0);
 
         // Asignar y configurar el script SimpleTerrainGenerator al chunk
@@ -30,17 +30,18 @@ public class Forest : MonoBehaviour {
         terrainGen_0_0.heightMultiplier = 70f;
 
         // Asignar textura al chunk, si existe
-        Material material_0_0 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Textures/grass.mtlx");
+        Material material_0_0 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Ground textures pack/Ground & rocks 02/Ground & rocks pattern 02.mat");
         if (material_0_0 != null)
         {
             chunk_0_0.GetComponent<Renderer>().material = material_0_0;
+            AdjustTextureScale(chunk_0_0, material_0_0);  // Ajustamos la escala de la textura
         }
         else
         {
-            Debug.LogWarning("Textura Assets/Textures/grass.mat no encontrado.");
+            Debug.LogWarning("Textura Assets/Ground textures pack/Ground & rocks 02/Ground & rocks pattern 02.mat no encontrado.");
         }
 
-        // Aï¿½adir chunk a la lista de chunks
+        // Añadir chunk a la lista de chunks
         chunk_list.Add(chunk_0_0);
         pos_x_list.Add(0);
         pos_y_list.Add(0);
@@ -51,9 +52,9 @@ public class Forest : MonoBehaviour {
         chunk_100_0.transform.localScale = new Vector3(10f, 1f, 10f);
         chunk_100_0.name = "Chunk_Forest_100_0";
 
-        // Aï¿½adir chunk a la lista y sus coordenadas
+        // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_100_0);
-        pos_x_list.Add(100)
+        pos_x_list.Add(100);
         pos_y_list.Add(0);
 
         // Asignar y configurar el script SimpleTerrainGenerator al chunk
@@ -63,17 +64,18 @@ public class Forest : MonoBehaviour {
         terrainGen_100_0.heightMultiplier = 20f;
 
         // Asignar textura al chunk, si existe
-        Material material_100_0 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Textures/rojo.mtlx");
+        Material material_100_0 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Ground textures pack/Grass & dead leafs 01/Grass & dead leafs pattern 01.mat");
         if (material_100_0 != null)
         {
             chunk_100_0.GetComponent<Renderer>().material = material_100_0;
+            AdjustTextureScale(chunk_100_0, material_100_0);  // Ajustamos la escala de la textura
         }
         else
         {
-            Debug.LogWarning("Textura Assets/Textures/rojo.mat no encontrado.");
+            Debug.LogWarning("Textura Assets/Ground textures pack/Grass & dead leafs 01/Grass & dead leafs pattern 01.mat no encontrado.");
         }
 
-        // Aï¿½adir chunk a la lista de chunks
+        // Añadir chunk a la lista de chunks
         chunk_list.Add(chunk_100_0);
         pos_x_list.Add(1);
         pos_y_list.Add(0);
@@ -84,9 +86,9 @@ public class Forest : MonoBehaviour {
         chunk_100_100.transform.localScale = new Vector3(10f, 1f, 10f);
         chunk_100_100.name = "Chunk_Forest_100_100";
 
-        // Aï¿½adir chunk a la lista y sus coordenadas
+        // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_100_100);
-        pos_x_list.Add(100)
+        pos_x_list.Add(100);
         pos_y_list.Add(100);
 
         // Asignar y configurar el script SimpleTerrainGenerator al chunk
@@ -96,29 +98,44 @@ public class Forest : MonoBehaviour {
         terrainGen_100_100.heightMultiplier = 80f;
 
         // Asignar textura al chunk, si existe
-        Material material_100_100 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Textures/rojo.mtlx");
+        Material material_100_100 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Ground textures pack/Grass 03/Grass pattern 03.mat");
         if (material_100_100 != null)
         {
             chunk_100_100.GetComponent<Renderer>().material = material_100_100;
+            AdjustTextureScale(chunk_100_100, material_100_100);  // Ajustamos la escala de la textura
         }
         else
         {
-            Debug.LogWarning("Textura Assets/Textures/rojo.mat no encontrado.");
+            Debug.LogWarning("Textura Assets/Ground textures pack/Grass 03/Grass pattern 03.mat no encontrado.");
         }
 
-        // Aï¿½adir chunk a la lista de chunks
+        // Añadir chunk a la lista de chunks
         chunk_list.Add(chunk_100_100);
         pos_x_list.Add(1);
         pos_y_list.Add(1);
 
-        // Crear un objeto vacï¿½o en la escena
-        GameObject emptyObject = new GameObject("UnirTerrenosManager");
+        // Crear un objeto vacío en la escena
+        GameObject emptyObject = new GameObject("mergeTerrainScript");
 
-        // Aï¿½adir el script unirTerrenosScript al objeto vacï¿½o
+        // Añadir el script unirTerrenosScript al objeto vacío
         unirTerrenosScript unir_terrenos = emptyObject.AddComponent<unirTerrenosScript>();
         unir_terrenos.chunk_list = chunk_list;
         unir_terrenos.pos_x_list = pos_x_list;
         unir_terrenos.pos_y_list = pos_y_list;
+
+        // Función para ajustar la escala de la textura en función del tamaño del chunk
+        void AdjustTextureScale(GameObject chunk, Material material)
+        {
+            // Tamaño base del plano sin escalado
+            Vector3 baseSize = chunk.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+
+            // Tamaño final del chunk, tomando en cuenta la escala
+            Vector3 finalSize = new Vector3(baseSize.x * chunk.transform.localScale.x, baseSize.y * chunk.transform.localScale.y, baseSize.z * chunk.transform.localScale.z);
+
+            // Ajustamos la escala de la textura en función del tamaño final del chunk
+            // Dividimos por el tamaño base de la textura (suponemos que es de 1x1 en la textura original)
+            material.mainTextureScale = new Vector2(finalSize.x / baseSize.x, finalSize.z / baseSize.z);
+        }
     }
 }
     
