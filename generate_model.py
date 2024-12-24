@@ -91,19 +91,6 @@ public class {scene["name"]} : MonoBehaviour {{
         pos_y_list.Add({chunk["pos_y"]});
 """
 
-        # Generar el código para cada gameobject en el chunk
-        for gameobject in chunk["gameobjects"]:
-                model = gameobject["model"]
-                density = gameobject["density"]
-
-                # Verificar si el gameobject tiene `scale` o `min_scale` y `max_scale`
-                if "scale" in gameobject:
-                    gameobject_scale = gameobject["scale"]
-
-                elif "min_scale" in gameobject and "max_scale" in gameobject:
-                    min_scale = gameobject["min_scale"]
-                    max_scale = gameobject["max_scale"]
-
     # Suavizar corte entre los chunks
     cs_content += """
         // Crear un objeto vacío en la escena
@@ -128,13 +115,78 @@ public class {scene["name"]} : MonoBehaviour {{
             // Dividimos por el tamaño base de la textura (suponemos que es de 1x1 en la textura original)
             material.mainTextureScale = new Vector2(finalSize.x / baseSize.x, finalSize.z / baseSize.z);
         }
-    }
-}
     """
+
+    # Dibujar los distintos gameobjects de cada chunk
+    for chunk in scene["chunks"]:
+        # Sacamos los datos del chunk
+        pos_x = chunk["pos_x"] * width_chunk * 10 # inicio x
+        pos_y = chunk["pos_y"] * length_chunk * 10 # inicio y
+        pos_x_end = (chunk["pos_x"]+1) * width_chunk * 10 # límite x
+        pos_y_end = (chunk["pos_y"]+1) * length_chunk * 10 # límite y
+
+        # Llamamos al método add_gameobjects_to_chunk para dibujar cada gameobject en el chunk
+        cs_content = add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y, pos_x_end, pos_y_end)
+
+
+    # Se añade el fin de programa
+    cs_content += """
+
+    }
+}    
+"""
 
     # Guardar el contenido en un archivo .cs
     with open(cs_output_path, 'w') as file:
         file.write(cs_content)
+
+
+
+'''
+    Method name: add_gameobjects_to_chunk
+    Function: itera sobre cada gameobject del chunk para "dibujarlo"
+'''
+def add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y,  pos_x_end, pos_y_end):
+    for gameobject in chunk["gameobjects"]:
+        model_path = gameobject["model"]
+        density = gameobject["density"]
+
+        # Configuración de escala
+        scale_code = ""
+        if "scale" in gameobject:
+            scale_code = f"float objectScale = {gameobject['scale']}f;"
+        elif "min_scale" in gameobject and "max_scale" in gameobject:
+            scale_code = f"""float objectScale = Random.Range({gameobject['min_scale']}f, {gameobject['max_scale']}f);"""
+
+        # Código para añadir objetos
+        cs_content += f"""
+        // Añadir GameObjects al chunk
+        for (int i = 0; i < {density}; i++) {{
+            Vector3 randomPosition = new Vector3(
+                Random.Range({pos_x}f, {pos_x_end}),
+                0f,
+                Random.Range({pos_y}f, {pos_y_end})
+            );
+
+            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
+            if (terrain != null) {{
+                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            }} else {{
+                Debug.LogWarning("No se encontró un terreno activo.");
+            }}
+
+            GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("{model_path}.prefab");
+            if (newObject != null) {{
+                GameObject instance = Instantiate(newObject);
+                instance.transform.position = randomPosition;
+                {scale_code}
+                instance.transform.localScale = Vector3.one * objectScale;
+            }} else {{
+                Debug.LogWarning("Modelo {model_path}.prefab no encontrado.");
+            }}
+        }}
+        """
+    return cs_content
 
 
 

@@ -68,6 +68,33 @@ public class Mountain : MonoBehaviour {
             // Dividimos por el tamaño base de la textura (suponemos que es de 1x1 en la textura original)
             material.mainTextureScale = new Vector2(finalSize.x / baseSize.x, finalSize.z / baseSize.z);
         }
-    }
-}
     
+        // Añadir GameObjects al chunk
+        for (int i = 0; i < 15; i++) {
+            Vector3 randomPosition = new Vector3(
+                Random.Range(0f, 50),
+                0f,
+                Random.Range(100f, 200)
+            );
+
+            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
+            if (terrain != null) {
+                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            } else {
+                Debug.LogWarning("No se encontró un terreno activo.");
+            }
+
+            GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("src/models/rock.prefab");
+            if (newObject != null) {
+                GameObject instance = Instantiate(newObject);
+                instance.transform.position = randomPosition;
+                float objectScale = Random.Range(0.7f, 1.2f);
+                instance.transform.localScale = Vector3.one * objectScale;
+            } else {
+                Debug.LogWarning("Modelo src/models/rock.prefab no encontrado.");
+            }
+        }
+        
+
+    }
+}    

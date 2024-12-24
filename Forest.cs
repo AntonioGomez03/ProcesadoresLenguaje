@@ -136,6 +136,111 @@ public class Forest : MonoBehaviour {
             // Dividimos por el tamaño base de la textura (suponemos que es de 1x1 en la textura original)
             material.mainTextureScale = new Vector2(finalSize.x / baseSize.x, finalSize.z / baseSize.z);
         }
-    }
-}
     
+        // Añadir GameObjects al chunk
+        for (int i = 0; i < 2; i++) {
+            Vector3 randomPosition = new Vector3(
+                Random.Range(0f, 100),
+                0f,
+                Random.Range(0f, 100)
+            );
+
+            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
+            if (terrain != null) {
+                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            } else {
+                Debug.LogWarning("No se encontró un terreno activo.");
+            }
+
+            GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Rocks/Prefabs/RockChunk01.prefab");
+            if (newObject != null) {
+                GameObject instance = Instantiate(newObject);
+                instance.transform.position = randomPosition;
+                float objectScale = 1.0f;
+                instance.transform.localScale = Vector3.one * objectScale;
+            } else {
+                Debug.LogWarning("Modelo Assets/3D Gamekit - Environment Pack/Environment/Rocks/Prefabs/RockChunk01.prefab no encontrado.");
+            }
+        }
+        
+        // Añadir GameObjects al chunk
+        for (int i = 0; i < 4; i++) {
+            Vector3 randomPosition = new Vector3(
+                Random.Range(0f, 100),
+                0f,
+                Random.Range(0f, 100)
+            );
+
+            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
+            if (terrain != null) {
+                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            } else {
+                Debug.LogWarning("No se encontró un terreno activo.");
+            }
+
+            GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge01.prefab");
+            if (newObject != null) {
+                GameObject instance = Instantiate(newObject);
+                instance.transform.position = randomPosition;
+                float objectScale = Random.Range(0.2f, 0.5f);
+                instance.transform.localScale = Vector3.one * objectScale;
+            } else {
+                Debug.LogWarning("Modelo Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge01.prefab no encontrado.");
+            }
+        }
+        
+        // Añadir GameObjects al chunk
+        for (int i = 0; i < 15; i++) {
+            Vector3 randomPosition = new Vector3(
+                Random.Range(100f, 200),
+                0f,
+                Random.Range(0f, 100)
+            );
+
+            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
+            if (terrain != null) {
+                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            } else {
+                Debug.LogWarning("No se encontró un terreno activo.");
+            }
+
+            GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge04.prefab");
+            if (newObject != null) {
+                GameObject instance = Instantiate(newObject);
+                instance.transform.position = randomPosition;
+                float objectScale = 1.2f;
+                instance.transform.localScale = Vector3.one * objectScale;
+            } else {
+                Debug.LogWarning("Modelo Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge04.prefab no encontrado.");
+            }
+        }
+        
+        // Añadir GameObjects al chunk
+        for (int i = 0; i < 15; i++) {
+            Vector3 randomPosition = new Vector3(
+                Random.Range(100f, 200),
+                0f,
+                Random.Range(100f, 200)
+            );
+
+            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
+            if (terrain != null) {
+                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            } else {
+                Debug.LogWarning("No se encontró un terreno activo.");
+            }
+
+            GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge02.prefab");
+            if (newObject != null) {
+                GameObject instance = Instantiate(newObject);
+                instance.transform.position = randomPosition;
+                float objectScale = 1.2f;
+                instance.transform.localScale = Vector3.one * objectScale;
+            } else {
+                Debug.LogWarning("Modelo Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge02.prefab no encontrado.");
+            }
+        }
+        
+
+    }
+}    
