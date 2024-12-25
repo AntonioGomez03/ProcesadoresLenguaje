@@ -17,6 +17,9 @@ public class Forest : MonoBehaviour {
         chunk_0_0.transform.position = new Vector3(0f, 0f, 0f);
         chunk_0_0.transform.localScale = new Vector3(10f, 1f, 10f);
         chunk_0_0.name = "Chunk_Forest_0_0";
+        
+        // Se añade un collider al chunk para detectar colisiones
+        chunk_0_0.AddComponent<MeshCollider>();
 
         // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_0_0);
@@ -51,6 +54,9 @@ public class Forest : MonoBehaviour {
         chunk_100_0.transform.position = new Vector3(100f, 0f, 0f);
         chunk_100_0.transform.localScale = new Vector3(10f, 1f, 10f);
         chunk_100_0.name = "Chunk_Forest_100_0";
+        
+        // Se añade un collider al chunk para detectar colisiones
+        chunk_100_0.AddComponent<MeshCollider>();
 
         // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_100_0);
@@ -85,6 +91,9 @@ public class Forest : MonoBehaviour {
         chunk_100_100.transform.position = new Vector3(100f, 0f, 100f);
         chunk_100_100.transform.localScale = new Vector3(10f, 1f, 10f);
         chunk_100_100.name = "Chunk_Forest_100_100";
+        
+        // Se añade un collider al chunk para detectar colisiones
+        chunk_100_100.AddComponent<MeshCollider>();
 
         // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_100_100);
@@ -139,20 +148,56 @@ public class Forest : MonoBehaviour {
     
         // Añadir GameObjects al chunk
         for (int i = 0; i < 2; i++) {
-            Vector3 randomPosition = new Vector3(
-                Random.Range(0f, 100),
-                0f,
-                Random.Range(0f, 100)
-            );
+            // Valores aleatorios para las posiciones X,Z del objeto
+            float randomValue_X = Random.Range(-50.0f, 50.0f);
+            float randomValue_Z = Random.Range(-50.0f, 50.0f);
 
-            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
-            if (terrain != null) {
-                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            // Disparar un rayo hacia abajo desde una posición en X,Z (para determinar la altura del objeto en el plano)
+            // Crear el rayo
+            Ray ray = new Ray(new Vector3(randomValue_X, 100f, randomValue_Z), Vector3.down);  // Disparo hacia abajo
+            RaycastHit hit;
+            float Value_Y = 0f;
+
+            // Visualiza el rayo en la escena para verificar que está correctamente apuntando hacia abajo
+            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 5f);  // Dibuja el rayo en la escena
+
+            if (Physics.Raycast(ray, out hit)) {
+                // La posición Y donde el rayo impacta es la altura en ese punto
+                Value_Y = hit.point.y;
+                Debug.Log("Rayo impactado en: " + hit.point);
             } else {
-                Debug.LogWarning("No se encontró un terreno activo.");
+                Debug.LogWarning("No se encontró ninguna superficie en la posición especificada.");
             }
 
+
+            Vector3 randomPosition = new Vector3(
+                randomValue_X,
+                Value_Y,
+                randomValue_Z
+            );
+
             GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Rocks/Prefabs/RockChunk01.prefab");
+
+            // Obtener el MeshFilter del GameObject
+            MeshFilter meshFilter = newObject.GetComponent<MeshFilter>();
+
+            if (meshFilter != null)
+            {
+                // Obtener las dimensiones del Mesh
+                Bounds bounds = meshFilter.mesh.bounds;
+
+                // La altura es la distancia entre el punto más bajo y el más alto en el eje Y
+                float height = bounds.size.y;
+                Debug.Log("Altura del GameObject (Mesh): " + height);
+                // Modificar el Vector3 sumando la altura a Y
+                randomPosition.y += height;
+            }
+            else
+            {
+                Debug.LogWarning("El GameObject no tiene un MeshFilter.");
+            }
+
+
             if (newObject != null) {
                 GameObject instance = Instantiate(newObject);
                 instance.transform.position = randomPosition;
@@ -165,20 +210,56 @@ public class Forest : MonoBehaviour {
         
         // Añadir GameObjects al chunk
         for (int i = 0; i < 4; i++) {
-            Vector3 randomPosition = new Vector3(
-                Random.Range(0f, 100),
-                0f,
-                Random.Range(0f, 100)
-            );
+            // Valores aleatorios para las posiciones X,Z del objeto
+            float randomValue_X = Random.Range(-50.0f, 50.0f);
+            float randomValue_Z = Random.Range(-50.0f, 50.0f);
 
-            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
-            if (terrain != null) {
-                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            // Disparar un rayo hacia abajo desde una posición en X,Z (para determinar la altura del objeto en el plano)
+            // Crear el rayo
+            Ray ray = new Ray(new Vector3(randomValue_X, 100f, randomValue_Z), Vector3.down);  // Disparo hacia abajo
+            RaycastHit hit;
+            float Value_Y = 0f;
+
+            // Visualiza el rayo en la escena para verificar que está correctamente apuntando hacia abajo
+            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 5f);  // Dibuja el rayo en la escena
+
+            if (Physics.Raycast(ray, out hit)) {
+                // La posición Y donde el rayo impacta es la altura en ese punto
+                Value_Y = hit.point.y;
+                Debug.Log("Rayo impactado en: " + hit.point);
             } else {
-                Debug.LogWarning("No se encontró un terreno activo.");
+                Debug.LogWarning("No se encontró ninguna superficie en la posición especificada.");
             }
 
+
+            Vector3 randomPosition = new Vector3(
+                randomValue_X,
+                Value_Y,
+                randomValue_Z
+            );
+
             GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge01.prefab");
+
+            // Obtener el MeshFilter del GameObject
+            MeshFilter meshFilter = newObject.GetComponent<MeshFilter>();
+
+            if (meshFilter != null)
+            {
+                // Obtener las dimensiones del Mesh
+                Bounds bounds = meshFilter.mesh.bounds;
+
+                // La altura es la distancia entre el punto más bajo y el más alto en el eje Y
+                float height = bounds.size.y;
+                Debug.Log("Altura del GameObject (Mesh): " + height);
+                // Modificar el Vector3 sumando la altura a Y
+                randomPosition.y += height;
+            }
+            else
+            {
+                Debug.LogWarning("El GameObject no tiene un MeshFilter.");
+            }
+
+
             if (newObject != null) {
                 GameObject instance = Instantiate(newObject);
                 instance.transform.position = randomPosition;
@@ -191,20 +272,56 @@ public class Forest : MonoBehaviour {
         
         // Añadir GameObjects al chunk
         for (int i = 0; i < 15; i++) {
-            Vector3 randomPosition = new Vector3(
-                Random.Range(100f, 200),
-                0f,
-                Random.Range(0f, 100)
-            );
+            // Valores aleatorios para las posiciones X,Z del objeto
+            float randomValue_X = Random.Range(50.0f, 150.0f);
+            float randomValue_Z = Random.Range(-50.0f, 50.0f);
 
-            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
-            if (terrain != null) {
-                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            // Disparar un rayo hacia abajo desde una posición en X,Z (para determinar la altura del objeto en el plano)
+            // Crear el rayo
+            Ray ray = new Ray(new Vector3(randomValue_X, 100f, randomValue_Z), Vector3.down);  // Disparo hacia abajo
+            RaycastHit hit;
+            float Value_Y = 0f;
+
+            // Visualiza el rayo en la escena para verificar que está correctamente apuntando hacia abajo
+            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 5f);  // Dibuja el rayo en la escena
+
+            if (Physics.Raycast(ray, out hit)) {
+                // La posición Y donde el rayo impacta es la altura en ese punto
+                Value_Y = hit.point.y;
+                Debug.Log("Rayo impactado en: " + hit.point);
             } else {
-                Debug.LogWarning("No se encontró un terreno activo.");
+                Debug.LogWarning("No se encontró ninguna superficie en la posición especificada.");
             }
 
+
+            Vector3 randomPosition = new Vector3(
+                randomValue_X,
+                Value_Y,
+                randomValue_Z
+            );
+
             GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge04.prefab");
+
+            // Obtener el MeshFilter del GameObject
+            MeshFilter meshFilter = newObject.GetComponent<MeshFilter>();
+
+            if (meshFilter != null)
+            {
+                // Obtener las dimensiones del Mesh
+                Bounds bounds = meshFilter.mesh.bounds;
+
+                // La altura es la distancia entre el punto más bajo y el más alto en el eje Y
+                float height = bounds.size.y;
+                Debug.Log("Altura del GameObject (Mesh): " + height);
+                // Modificar el Vector3 sumando la altura a Y
+                randomPosition.y += height;
+            }
+            else
+            {
+                Debug.LogWarning("El GameObject no tiene un MeshFilter.");
+            }
+
+
             if (newObject != null) {
                 GameObject instance = Instantiate(newObject);
                 instance.transform.position = randomPosition;
@@ -217,20 +334,56 @@ public class Forest : MonoBehaviour {
         
         // Añadir GameObjects al chunk
         for (int i = 0; i < 15; i++) {
-            Vector3 randomPosition = new Vector3(
-                Random.Range(100f, 200),
-                0f,
-                Random.Range(100f, 200)
-            );
+            // Valores aleatorios para las posiciones X,Z del objeto
+            float randomValue_X = Random.Range(50.0f, 150.0f);
+            float randomValue_Z = Random.Range(50.0f, 150.0f);
 
-            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
-            if (terrain != null) {
-                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            // Disparar un rayo hacia abajo desde una posición en X,Z (para determinar la altura del objeto en el plano)
+            // Crear el rayo
+            Ray ray = new Ray(new Vector3(randomValue_X, 100f, randomValue_Z), Vector3.down);  // Disparo hacia abajo
+            RaycastHit hit;
+            float Value_Y = 0f;
+
+            // Visualiza el rayo en la escena para verificar que está correctamente apuntando hacia abajo
+            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 5f);  // Dibuja el rayo en la escena
+
+            if (Physics.Raycast(ray, out hit)) {
+                // La posición Y donde el rayo impacta es la altura en ese punto
+                Value_Y = hit.point.y;
+                Debug.Log("Rayo impactado en: " + hit.point);
             } else {
-                Debug.LogWarning("No se encontró un terreno activo.");
+                Debug.LogWarning("No se encontró ninguna superficie en la posición especificada.");
             }
 
+
+            Vector3 randomPosition = new Vector3(
+                randomValue_X,
+                Value_Y,
+                randomValue_Z
+            );
+
             GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/3D Gamekit - Environment Pack/Environment/Vegetation/Large/Prefabs/VegetationLarge02.prefab");
+
+            // Obtener el MeshFilter del GameObject
+            MeshFilter meshFilter = newObject.GetComponent<MeshFilter>();
+
+            if (meshFilter != null)
+            {
+                // Obtener las dimensiones del Mesh
+                Bounds bounds = meshFilter.mesh.bounds;
+
+                // La altura es la distancia entre el punto más bajo y el más alto en el eje Y
+                float height = bounds.size.y;
+                Debug.Log("Altura del GameObject (Mesh): " + height);
+                // Modificar el Vector3 sumando la altura a Y
+                randomPosition.y += height;
+            }
+            else
+            {
+                Debug.LogWarning("El GameObject no tiene un MeshFilter.");
+            }
+
+
             if (newObject != null) {
                 GameObject instance = Instantiate(newObject);
                 instance.transform.position = randomPosition;

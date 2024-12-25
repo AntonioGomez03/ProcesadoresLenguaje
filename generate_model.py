@@ -61,6 +61,9 @@ public class {scene["name"]} : MonoBehaviour {{
         chunk_{pos_x}_{pos_y}.transform.position = new Vector3({pos_x}f, 0f, {pos_y}f);
         chunk_{pos_x}_{pos_y}.transform.localScale = new Vector3({width_chunk}f, 1f, {length_chunk}f);
         chunk_{pos_x}_{pos_y}.name = "Chunk_{scene_name}_{pos_x}_{pos_y}";
+        
+        // Se añade un collider al chunk para detectar colisiones
+        chunk_{pos_x}_{pos_y}.AddComponent<MeshCollider>();
 
         // Añadir chunk a la lista y sus coordenadas
         chunk_list.Add(chunk_{pos_x}_{pos_y});
@@ -119,14 +122,19 @@ public class {scene["name"]} : MonoBehaviour {{
 
     # Dibujar los distintos gameobjects de cada chunk
     for chunk in scene["chunks"]:
-        # Sacamos los datos del chunk
-        pos_x = chunk["pos_x"] * width_chunk * 10 # inicio x
-        pos_y = chunk["pos_y"] * length_chunk * 10 # inicio y
-        pos_x_end = (chunk["pos_x"]+1) * width_chunk * 10 # límite x
-        pos_y_end = (chunk["pos_y"]+1) * length_chunk * 10 # límite y
+        
+        # Centros de los chunks
+        pos_x = chunk["pos_x"] * width_chunk * 10
+        pos_y = chunk["pos_y"] * length_chunk * 10
+        
+        # Sacamos los datos del chunk (para calcular donde podemos dibujar los gameobjects)
+        pos_x_start = pos_x - ((width_chunk / 2)*10) # inicio x
+        pos_y_start = pos_y - ((length_chunk / 2)*10) # inicio y
+        pos_x_end = pos_x + ((width_chunk / 2)*10) # fin x
+        pos_y_end = pos_y + ((length_chunk / 2)*10) # fin y
 
         # Llamamos al método add_gameobjects_to_chunk para dibujar cada gameobject en el chunk
-        cs_content = add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y, pos_x_end, pos_y_end)
+        cs_content = add_gameobjects_to_chunk(cs_content, chunk, pos_x_start, pos_y_start, pos_x_end, pos_y_end)
 
 
     # Se añade el fin de programa
@@ -162,20 +170,56 @@ def add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y,  pos_x_end, pos_y_
         cs_content += f"""
         // Añadir GameObjects al chunk
         for (int i = 0; i < {density}; i++) {{
-            Vector3 randomPosition = new Vector3(
-                Random.Range({pos_x}f, {pos_x_end}),
-                0f,
-                Random.Range({pos_y}f, {pos_y_end})
-            );
+            // Valores aleatorios para las posiciones X,Z del objeto
+            float randomValue_X = Random.Range({pos_x}f, {pos_x_end}f);
+            float randomValue_Z = Random.Range({pos_y}f, {pos_y_end}f);
 
-            Terrain terrain = Terrain.activeTerrain; // Asegúrate de tener un terreno activo
-            if (terrain != null) {{
-                randomPosition.y = terrain.SampleHeight(randomPosition) + terrain.GetPosition().y;
+            // Disparar un rayo hacia abajo desde una posición en X,Z (para determinar la altura del objeto en el plano)
+            // Crear el rayo
+            Ray ray = new Ray(new Vector3(randomValue_X, 100f, randomValue_Z), Vector3.down);  // Disparo hacia abajo
+            RaycastHit hit;
+            float Value_Y = 0f;
+
+            // Visualiza el rayo en la escena para verificar que está correctamente apuntando hacia abajo
+            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 5f);  // Dibuja el rayo en la escena
+
+            if (Physics.Raycast(ray, out hit)) {{
+                // La posición Y donde el rayo impacta es la altura en ese punto
+                Value_Y = hit.point.y;
+                Debug.Log("Rayo impactado en: " + hit.point);
             }} else {{
-                Debug.LogWarning("No se encontró un terreno activo.");
+                Debug.LogWarning("No se encontró ninguna superficie en la posición especificada.");
             }}
 
+
+            Vector3 randomPosition = new Vector3(
+                randomValue_X,
+                Value_Y,
+                randomValue_Z
+            );
+
             GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("{model_path}.prefab");
+
+            // Obtener el MeshFilter del GameObject
+            MeshFilter meshFilter = newObject.GetComponent<MeshFilter>();
+
+            if (meshFilter != null)
+            {{
+                // Obtener las dimensiones del Mesh
+                Bounds bounds = meshFilter.mesh.bounds;
+
+                // La altura es la distancia entre el punto más bajo y el más alto en el eje Y
+                float height = bounds.size.y;
+                Debug.Log("Altura del GameObject (Mesh): " + height);
+                // Modificar el Vector3 sumando la altura a Y
+                randomPosition.y += height;
+            }}
+            else
+            {{
+                Debug.LogWarning("El GameObject no tiene un MeshFilter.");
+            }}
+
+
             if (newObject != null) {{
                 GameObject instance = Instantiate(newObject);
                 instance.transform.position = randomPosition;
@@ -187,6 +231,8 @@ def add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y,  pos_x_end, pos_y_
         }}
         """
     return cs_content
+
+
 
 
 
