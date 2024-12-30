@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import Prism from "prismjs";
 
 Prism.languages.mylang = {
@@ -15,6 +15,40 @@ Prism.languages.mylang = {
 const CodeEditor = () => {
     const textareaRef = useRef(null);
     const codeRef = useRef(null);
+
+    const initialCode = `DEFINE SETUP(){
+    /* Definición del setup */
+    GAMEOBJECT global_object1 = GAMEOBJECT("'src/models/tree'", 10, 2.0);
+    LIST<GAMEOBJECT> global_objects = [global_object1];
+
+    /* Definición de los chunks */
+    CHUNK global_chunk1 =  CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects);
+}
+
+DEFINE WORLD("Mi mundo"){
+    /* Definición de escena */
+    DEFINE SCENE("Escena 1"){
+        /* Definición de objetos */
+        GAMEOBJECT object1 = GAMEOBJECT("'src/models/tree'", 10, 2.0);
+        LIST<GAMEOBJECT> objects = [object1];
+
+        /* Definición de chunks */
+        LIST<CHUNK> chunks
+        FOR i FROM 0 TO 10{
+            CHUNK c = CHUNK(i,0,20.0, 7.5, "src/textures/grass", objects);
+            APPEND chunks c;
+        }
+
+        /* Agregar los chunks a la escena */
+        FOR c IN chunks{
+            ADD c;
+        }
+        
+        /* Agregar un chunk global */
+        ADD global_chunk1
+    }
+}
+     `;
 
     const update = (text) => {
         const resultElement = codeRef.current;
@@ -54,6 +88,12 @@ const CodeEditor = () => {
             update(element.value);
         }
     };
+
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        textarea.value = initialCode;
+        update(initialCode);
+    }, []);
 
     return (
         <div className="code-editor-div">
