@@ -7,7 +7,7 @@ Prism.languages.mylang = {
         /\/\*[\s\S]*?\*\//
     ],
     keyword: /\b(DEFINE|SETUP|WORLD|ADD|APPEND|SCENE|INT|FLOAT|STRING|GAMEOBJECT|CHUNK|LIST)\b/,
-    string: /'"' ~["]* '"'/,
+    string: /"[^"]*"/,
     number: /\b\d+(?:\.\d+)?\b/,
     operator: /[+\-*\/=<>!]/
 };
