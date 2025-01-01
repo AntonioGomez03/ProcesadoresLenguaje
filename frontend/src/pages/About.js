@@ -48,7 +48,7 @@ La idea del proyecto consiste en tomar un código escrito en nuestro lenguaje es
 
 <br />
 <div align="center">
-    <img src="${organizacionProyecto}" alt="Organización del Proyecto" width="300" />
+    <img src="${organizacionProyecto}" alt="Organización del Proyecto" width="80%" />
 </div>
 <br />
 
