@@ -18,7 +18,7 @@ const CodeEditor = () => {
 
     const initialCode = `DEFINE SETUP(){
     /* Definición del setup */
-    GAMEOBJECT global_object1 = GAMEOBJECT("'src/models/tree'", 10, 2.0);
+    GAMEOBJECT global_object1 = GAMEOBJECT("src/models/tree", 10, 2.0);
     LIST<GAMEOBJECT> global_objects = [global_object1];
 
     /* Definición de los chunks */
