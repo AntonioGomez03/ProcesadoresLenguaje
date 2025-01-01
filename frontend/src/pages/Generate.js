@@ -15,14 +15,16 @@ const Generate = () => {
         <div className="page-container">
             <Navbar />
             <div className="generate-content-container">
-                <div className="fixed-image">
-                    <img src={icon_image} alt="Icon" />
-                </div>
-                <div className="editor-container">
-                    <h1>Generate Unity World</h1>
-                    <CodeEditor />
-                    <button className="generate-button"
-                        onClick={handleGenerateClick}>Generate</button>
+                <h1>Generate Unity World</h1>
+                <div className="generate-code-content-container">
+                    <div className="fixed-image">
+                        <img src={icon_image} alt="Icon" />
+                    </div>
+                    <div className="editor-container">
+                        <CodeEditor />
+                        <button className="generate-button"
+                            onClick={handleGenerateClick}>Generate</button>
+                    </div>
                 </div>
             </div>
 

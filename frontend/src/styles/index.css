@@ -41,12 +41,12 @@ body {
   color: #00eebeec;
 }
 
-.generate-content-container {
+.generate-code-content-container {
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 1fr 5fr;
   align-items: top;
   justify-content: center;
-  margin-top: 20px;
+
 }
 
 .fixed-image {
@@ -84,7 +84,7 @@ body {
 
 .code-editor-div {
   position: relative;
-  width: 70%;
+  width: 90%;
   height: 60vh;
   margin: 10px;
   border: 1px solid #ccc;
@@ -167,7 +167,8 @@ body {
 }
 
 .about-content-container,
-.manual-content-container {
+.manual-content-container,
+.generate-content-container {
   display: flex;
   flex-direction: column;
   align-items: center;
