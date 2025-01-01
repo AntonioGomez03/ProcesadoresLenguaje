@@ -8,6 +8,21 @@ const Generate = () => {
         // Obtain the code from the CodeEditor component
         let code = document.querySelector(".code-editor-textarea").value;
         console.log(code);
+        // Send the code to the backend for processing
+        fetch("http://localhost:8000/generate_project", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ code: code })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
     }
 
 
