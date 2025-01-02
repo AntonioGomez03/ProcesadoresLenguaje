@@ -66,7 +66,6 @@ terminal FLOAT;
 terminal STRING; 
 terminal ID;
 
-
 terminal Integer INT_LITERAL;
 terminal Float FLOAT_LITERAL;
 terminal String STRING_LITERAL;
@@ -100,25 +99,63 @@ non terminal arithmetic_expression;
 non terminal chunk_or_gameobject; 
 non terminal rest_array;
 
+program ::= define_setup:setup define_world:world_definitions {: 
+    System.out.println("Definición del programa completada.");
+:};
 
-program ::= define_setup:varGlobales define_world:listaEscenas {: 
-        ArrayList<va
-        :}; 
+define_setup ::= DEFINE SETUP LPAREN RPAREN LBRACE statement_list:statements RBRACE {: 
+    System.out.println("Setup definido con " + statements.size() + " declaraciones.");
+:}
+    | DEFINE SETUP LPAREN RPAREN LBRACE RBRACE {: 
+    System.out.println("Setup vacío definido.");
+:};
 
-define_setup ::= DEFINE SETUP LPAREN RPAREN LBRACE statement_list RBRACE 
-                | DEFINE SETUP LPAREN RPAREN LBRACE RBRACE;
+statement_list ::= statement:s statement_list:sl {: 
+    List<Object> result = new ArrayList<>(s);
+    result.add(0, sl);
+    RESULT = result;
+:}
+    | statement:s {: 
+    RESULT = new ArrayList<>(List.of(sl));
+:};
 
-statement_list ::= statement statement_list
-                | statement;
-
-define_world ::=  DEFINE WORLD LPAREN id_or_string_literal RPAREN LBRACE define_scene_list RBRACE 
+define_world ::=  DEFINE WORLD LPAREN STRING_LITERAL:name RPAREN LBRACE define_scene_list:scenes RBRACE {:
+                world = new World(name);
+                for (Scene scene : scenes) {
+                world.addScene(scene);
+                }
+        System.out.println("Mundo definido: " + scenes);
+:}
+        | DEFINE WORLD LPAREN STRING_LITERAL RPAREN LBRACE RBRACE {: 
+        world = new World(name);
+        System.out.println("Mundo vacío definido: " + scenes);
+:}
                 | DEFINE WORLD LPAREN id_or_string_literal RPAREN LBRACE RBRACE;
  
-define_scene_list ::= define_scene define_scene_list 
-                    | define_scene;
+define_scene_list ::= define_scene:scene define_scene_list:sl  {:
+                    List<Scene> result = new ArrayList<>(scene);
+                    result.add(0, sl);
+                    RESULT = result; :}
+                    | define_scene:scene {: 
+    RESULT = new ArrayList<>(List.of(sl));
+:};
 
-define_scene ::= DEFINE SCENE LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_int_literal RPAREN LBRACE statement_list RBRACE
-                | DEFINE SCENE LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_int_literal RPAREN LBRACE RBRACE; 
+define_scene ::= DEFINE SCENE LPAREN STRING_LITERAL:name COMMA INT_LITERAL:width COMMA INT_LITERAL:height RPAREN LBRACE statement_list:statements RBRACE {: 
+                Scene scene = new Scene(name, Integer.parseInt(width), Integer.parseInt(height));
+                 for (Object stmt : $10) {
+        if (stmt instanceof Chunk) {
+            scene.addChunk((Chunk) stmt);
+        } else {
+            System.err.println("Elemento no reconocido en la escena: " + stmt);
+        }
+    }
+    RESULT = scene;
+    System.out.println("Escena definida: " + $3);
+:}
+                | DEFINE SCENE LPAREN STRING_LITERAL COMMA INT_LITERAL COMMA INT_LITERAL RPAREN LBRACE RBRACE {: 
+    RESULT = new Scene($3, Integer.parseInt($5), Integer.parseInt($7));
+    System.out.println("Escena vacía definida: " + $3);
+:};
 
 statement ::= assignment
 	| define_list 
@@ -129,10 +166,26 @@ statement ::= assignment
 	| add_statement
     | error {: paser.report_error("Error en sintaxis, la sentencia no es valida",null); :};
 
-chunck_constuctor ::= CHUNK LPAREN id_or_int_literal COMMA id_or_int_literal COMMA id_or_float_literal COMMA id_or_float_literal COMMA id_or_string_literal COMMA id_or_array RPAREN; 
 
-gameobject_constructor ::= GAMEOBJECT LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_float_literal COMMA id_or_float_literal RPAREN
-                        |  GAMEOBJECT LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_float_literal RPAREN; 
+chunck_constuctor ::= CHUNK LPAREN INT_LITERAL:posX COMMA INT_LITERAL:posY COMMA FLOAT_LITERAL:scale COMMA FLOAT_LITERAL:heightMultiplier COMMA STRING_LITERAL:texture COMMA array:objects RPAREN {: 
+    Chunk chunk = new Chunk(posX, posY, scale, heightMultiplier, objects);
+    for (Object obj : objects) {
+        if (obj instanceof GameObject) {
+            chunk.addGameObject((GameObject) obj);
+        } else {
+            System.err.println("Objeto no reconocido en el chunk: " + obj);
+        }
+    }
+    RESULT = chunk;
+    System.out.println("Chunk definido en posición [" + posX + ", " + posY + "]");
+:};
+
+gameobject_constructor ::= GAMEOBJECT LPAREN STRING_LITERAL:model COMMA INT_LITERAL:density COMMA FLOAT_LITERAL:scale RPAREN {: 
+    RESULT = new GameObject(model, density, scale);
+:}
+                            | GAMEOBJECT LPAREN STRING_LITERAL COMMA INT_LITERAL COMMA FLOAT_LITERAL COMMA FLOAT_LITERAL RPAREN {: 
+    RESULT = new GameObject(model,density, scale);
+:};
 
 define_list ::= LIST LT chunk_or_gameobject GT ID ASSIGN array
                 | ID ASSIGN array; 
@@ -140,14 +193,21 @@ define_list ::= LIST LT chunk_or_gameobject GT ID ASSIGN array
 chunk_or_gameobject ::= CHUNK 
                     | GAMEOBJECT;
 
-array ::= LSQUARE chunck_constuctor rest_array RSQUARE
-        | LSQUARE gameobject_constructor rest_array RSQUARE
-        | LSQUARE ID rest_array RSQUARE
-        | LSQUARE chunck_constuctor RSQUARE
-        | LSQUARE gameobject_constructor RSQUARE
-        | LSQUARE ID RSQUARE
-        | LSQUARE RSQUARE 
-        | error {:parser.report_error("Error en la sintaxis, la construccion del array no es correcta", null); :};
+array ::= LSQUARE gameobject_constructor rest_array RSQUARE {: 
+    List<Object> array = new ArrayList<>();
+    array.add($2);
+    array.addAll($3);
+    RESULT = array;
+:}
+        | LSQUARE chunck_constuctor rest_array RSQUARE {: 
+    List<Object> array = new ArrayList<>();
+    array.add($2);
+    array.addAll($3);
+    RESULT = array;
+:}
+        | LSQUARE RSQUARE {: 
+    RESULT = new ArrayList<>();
+:};
 
 rest_array ::= COMMA chunck_constuctor rest_array
             |  COMMA ID rest_array

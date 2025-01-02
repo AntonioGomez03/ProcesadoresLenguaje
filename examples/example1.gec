@@ -1,7 +1,7 @@
 /* Definición de objetos, variables y chunks globales */ 
 
 DEFINE SETUP(){
-    /* Definición de variables globales */
+    /* Definición de variabslles global/
     INT WIDTH_CHUNK = 20
     INT LENGH_CHUNK
     LENGH_CHUNK = 20  /* Cambiar */
@@ -26,7 +26,6 @@ DEFINE SETUP(){
 /* Definición de escenas */
 
 DEFINE WORLD("Mi Mundo"){
-
     /* Definición de escena */
 	DEFINE SCENE("Escena 1", WIDTH_CHUNK, LENGH_CHUNK){
         /* Definición de objetos */
@@ -50,7 +49,7 @@ DEFINE WORLD("Mi Mundo"){
 	}
 
     /* Definición de escena */
-    DEFINE SCENE("Escena 2", WIDTH_CHUNK + 10, LENGH_CHUNK + 10){
+        DEFINE SCENE("Escena 2", WIDTH_CHUNK, LENGH_CHUNK){
         /* Definición de variables */
         INT n = 5
 
