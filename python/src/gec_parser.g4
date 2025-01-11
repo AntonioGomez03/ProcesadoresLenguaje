@@ -3,7 +3,6 @@ grammar gec_parser;
 options {
 	tokenVocab = gec_lexer;
 }
-
 @parser::header {
 from parser.symbol_table import SymbolTable
 from parser.gec_objects import GameObject, Chunk, Scene, World
@@ -256,8 +255,8 @@ else:
 $gameobject = GameObject(temp_model, temp_density, temp_scale)
 };
 
-define_list: (LIST LT (CHUNK | GAMEOBJECT) GT |) ID ASSIGN array {
-self.symbol_table.set_value($ID.text, $array.object_list, "LIST<" + $ID.text + ">", "Contexto")
+define_list: (LIST LT (CHUNK | GAMEOBJECT) {type = self._input.LT(-1).text} GT |) ID ASSIGN array {
+self.symbol_table.set_value($ID.text, $array.object_list, "LIST<" + type + ">", "Contexto")
 };
 
 array
@@ -281,17 +280,17 @@ append_statement:
 		| gameobject_constructor
 		| chunk_constructor
 	) { 
-print("object_list_id", object_list_id)
-temp_object = self._input.LT(-1).text
-if isinstance(temp_object, Chunk):
-    temp_object = temp_object
-elif isinstance(temp_object, GameObject):
-    temp_object = temp_object
+# print("Toma", object_list_id)
+if self._input.LT(-8).text == "GAMEOBJECT" or self._input.LT(-9).text == "GAMEOBJECT":
+    temp_object = $gameobject_constructor.gameobject
+elif self._input.LT(-8).text == "CHUNK":
+    temp_object = $chunk_constructor.chunk
 else:
-    temp_object = self.symbol_table.get_value(temp_object)
+    temp_object = self.symbol_table.get_value(self._input.LT(-1).text)
+
 object_list = self.symbol_table.get_value(object_list_id)
 object_list.append(temp_object)
-self.symbol_table.set_value(object_list_id, object_list, "LIST<" + self.get_type(temp_object) + ">", "Contexto")
+# self.symbol_table.set_value(object_list_id, object_list, "LIST<" + self.get_type(temp_object) + ">", "Contexto")
 };
 
 add_statement
@@ -304,7 +303,6 @@ if isinstance(temp_chunk, Chunk):
 else:
     temp_chunk = self.symbol_table.get_value(temp_chunk)
 $chunk = temp_chunk
-
     };
 
 for_loop_number:
@@ -323,7 +321,7 @@ for_loop_list:
 
 assignment:
 	(INT | STRING | FLOAT |) ID {id = self._input.LT(-1).text } ASSIGN expression {
-self.symbol_table.set_value(id, $expression.value, "INT", "Contexto")
+self.symbol_table.set_value(id, $expression.value, self.get_type($expression.value), "Contexto")
     }
 	| (CHUNK |) ID {id = self._input.LT(-1).text } ASSIGN chunk_constructor {
 self.symbol_table.set_value(id, $chunk_constructor.chunk, "CHUNK", "Contexto")
@@ -370,7 +368,8 @@ declaration: (
 		| FLOAT {type = self._input.LT(-1).text}
 		| CHUNK {type = self._input.LT(-1).text}
 		| GAMEOBJECT {type = self._input.LT(-1).text}
-		| LIST LT (CHUNK | GAMEOBJECT) GT {type = "LIST<" + self._input.LT(-2).text + ">"}
+		| LIST LT (CHUNK | GAMEOBJECT) GT {
+type = "LIST<" + self._input.LT(-2).text + ">"}
 	) ID {id = self._input.LT(-1).text} {
 self.symbol_table.set_value(id, [], type, "Contexto")
     };
