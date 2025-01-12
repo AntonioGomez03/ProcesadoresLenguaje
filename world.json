@@ -1,11 +1,11 @@
 {
     "world": {
-        "name": "Mi Mundo",
+        "name": "Mi Mundo 2",
         "scenes": [
             {
                 "name": "Escena 1",
-                "width_chunk": 20,
-                "length_chunk": 20,
+                "width_chunk": 22,
+                "length_chunk": 15,
                 "chunks": [
                     {
                         "pos_x": 0,

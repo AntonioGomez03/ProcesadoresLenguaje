@@ -34,7 +34,10 @@ class SymbolTable:
         raise ValueError(f"Variable '{name}' no definida.")
 
     def __str__(self):
-        return str(self.table)
+        text = ""
+        for k, v in self.table.items():
+            text += f"\t- {k} -> {v}\n"
+        return text
 
 
 def eval_expression(values, operators=None):
@@ -82,11 +85,10 @@ class MyCustomVisitor(Visitor):
 
     def visitDefine_world(self, ctx):
         self.context = "WORLD"
-        w_name = ctx.getChild(3).getText()
-        if isinstance(w_name, str) and len(w_name) > 1 and w_name[0] == '"' and w_name[-1] == '"':
-            w_name = w_name[1:-1]
-        else:
-            w_name = self.symbol_table.get_value(w_name, self.context)
+        w_name = self.visit(ctx.string_expression())
+        if not isinstance(w_name, str):
+            raise ValueError("Nombre de mundo debe ser un string")
+
         world_obj = World(w_name)
         for sc in ctx.define_scene():
             s = self.visit(sc)
@@ -96,24 +98,18 @@ class MyCustomVisitor(Visitor):
         self.symbol_table.set_value("World", world_obj, "WORLD", self.context)
 
     def visitDefine_scene(self, ctx):
-        s_name = ctx.getChild(3).getText()
+        s_name = self.visit(ctx.string_expression())
         self.context = s_name
-        if isinstance(s_name, str) and len(s_name) > 1 and s_name[0] == '"' and s_name[-1] == '"':
-            s_name = s_name[1:-1]
-        else:
-            s_name = self.symbol_table.get_value(s_name, self.context)
+        if not isinstance(s_name, str):
+            raise ValueError("Nombre de escena debe ser un string")
         
-        width_chunk = ctx.getChild(5).getText()
-        if isinstance(width_chunk, str) and len(width_chunk) > 1 and width_chunk[0] == '"' and width_chunk[-1] == '"':
-            width_chunk = width_chunk[1:-1]
-        else:
-            width_chunk = self.symbol_table.get_value(width_chunk, self.context)
+        width_chunk = self.visit(ctx.numeric_expression(0))
+        if not isinstance(width_chunk, int):
+            raise ValueError("Ancho de chunk debe ser un entero")
                                                       
-        height_chunk = ctx.getChild(7).getText()
-        if isinstance(height_chunk, str) and len(height_chunk) > 1 and height_chunk[0] == '"' and height_chunk[-1] == '"':
-            height_chunk = height_chunk[1:-1]
-        else:
-            height_chunk = self.symbol_table.get_value(height_chunk,  self.context)
+        height_chunk = self.visit(ctx.numeric_expression(1))
+        if not isinstance(height_chunk, int):
+            raise ValueError("Alto de chunk debe ser un entero")
 
         scene = Scene(s_name, width_chunk, height_chunk)
         for c in ctx.statement():
@@ -134,7 +130,18 @@ class MyCustomVisitor(Visitor):
 
     def visitAssignment(self, ctx):
         name = ctx.ID().getText()
-        val = self.visit(ctx.expression()) if ctx.expression() else None
+        # val = self.visit(ctx.expression()) if ctx.expression() else None
+        val = None
+        try:
+            val = self.visit(ctx.numeric_expression())
+        except:
+            pass
+
+        try:
+            val = self.visit(ctx.string_expression())
+        except:
+            pass
+
         if val is None:
             if ctx.chunk_constructor():
                 val = self.visit(ctx.chunk_constructor())
@@ -216,24 +223,23 @@ class MyCustomVisitor(Visitor):
         return temp
 
     def visitChunk_constructor(self, ctx):
-        # Minimal extraction
-        posx = self.visit(ctx.expression(0))
+        posx = self.visit(ctx.numeric_expression(0))
         if not isinstance(posx, int):
             raise ValueError("Posx debe ser un entero")
         
-        posy = self.visit(ctx.expression(1))
+        posy = self.visit(ctx.numeric_expression(1))
         if not isinstance(posy, int):
             raise ValueError("Posy debe ser un entero")
         
-        sc = self.visit(ctx.expression(2))
+        sc = self.visit(ctx.numeric_expression(2))
         if not isinstance(sc, float) and not isinstance(sc, int):
             raise ValueError("Scale debe ser un flotante")
         
-        hm = self.visit(ctx.expression(3))
+        hm = self.visit(ctx.numeric_expression(3))
         if not isinstance(hm, float) and not isinstance(hm, int):
             raise ValueError("Height_multiplier debe ser un entero")
         
-        tx = self.visit(ctx.expression(4))
+        tx = self.visit(ctx.string_expression())
         if not isinstance(tx, str):
             raise ValueError("Texture debe ser un string")
         
@@ -244,26 +250,26 @@ class MyCustomVisitor(Visitor):
 
     def visitGameobject_constructor(self, ctx):
         # Minimal approach for variations
-        model = self.visit(ctx.expression(0))
+        model = self.visit(ctx.string_expression())
         if not isinstance(model, str):
             raise ValueError("Modelo debe ser un string")
         
-        density = self.visit(ctx.expression(1))
+        density = self.visit(ctx.numeric_expression(0))
         if not isinstance(density, float) and not isinstance(density, int):
             raise ValueError("Density debe ser un flotante")
         
         if ctx.getChildCount() == 9:
-            min_s = self.visit(ctx.expression(2))
+            min_s = self.visit(ctx.numeric_expression(1))
             if not isinstance(min_s, float) and not isinstance(min_s, int):
                 raise ValueError("Min_scale debe ser un flotante")
             
-            max_s = self.visit(ctx.expression(3))
+            max_s = self.visit(ctx.numeric_expression(2))
             if not isinstance(max_s, float) and not isinstance(max_s, int):
                 raise ValueError("Max_scale debe ser un flotante")
             
             return GameObject(model, density, min_s, max_s)
         else:
-            scale = self.visit(ctx.expression(2))
+            scale = self.visit(ctx.numeric_expression(1))
             if not isinstance(scale, float) and not isinstance(scale, int):
                 raise ValueError("Scale debe ser un flotante")
             
@@ -279,8 +285,8 @@ class MyCustomVisitor(Visitor):
                     out.append(self.visit(ctx.getChild(i)))
 
         return out
-
-    def visitExpression(self, ctx):
+    
+    def visitNumeric_expression(self, ctx):
         vals = []
         ops = []
         for i in range(0, ctx.getChildCount()):
@@ -290,15 +296,8 @@ class MyCustomVisitor(Visitor):
             else:
                 ops.append(node.getText())
         return eval_expression(vals, ops)
-
-    def visitExpression_aux(self, ctx):
-        child = ctx.getChild(0)
-        e = self.visit(child)
-        if e is None:
-            return self.visit(ctx.expression())
-        return e
     
-    def visitNumeric_expression(self, ctx):
+    def visitNumeric_expression_aux(self, ctx):
         child = ctx.getChild(0)
         if child.getText().isdigit():
             return int(child.getText())
@@ -309,24 +308,21 @@ class MyCustomVisitor(Visitor):
         return self.symbol_table.get_value(child.getText(), self.context)
     
     def visitString_expression(self, ctx):
+        vals = []
+        ops = []
+        for i in range(0, ctx.getChildCount()):
+            node = ctx.getChild(i)
+            if i % 2 == 0:
+                vals.append(self.visit(node))
+            else:
+                ops.append(node.getText())
+        return eval_expression(vals, ops)
+    
+    def visitString_expression_aux(self, ctx):
         child = ctx.getChild(0)
         if child.getText().startswith('"'):
             return child.getText()[1:-1]
         return self.symbol_table.get_value(child.getText(), self.context)
-
-    def _extract_value(self, node):
-        t = node.getText()
-        if t.startswith('"') and t.endswith('"'):
-            return t[1:-1]
-        try:
-            return int(t)
-        except:
-            pass
-        try:
-            return float(t)
-        except:
-            pass
-        return self.symbol_table.get_value(t, self.context)
 
     def get_type(self, obj):
         if isinstance(obj, int):

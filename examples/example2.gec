@@ -10,8 +10,8 @@ DEFINE SETUP() {
     LIST<CHUNK> global_chunks = [global_chunk, global_chunk2, CHUNK(0,3,20.0, 7, "src/textures/rock", global_gameobjects)]
 }
 
-DEFINE WORLD("Mi Mundo") {
-    DEFINE SCENE("Escena 1", WIDTH_CHUNK, LENGH_CHUNK) {
+DEFINE WORLD("Mi Mundo" + " 2") {
+    DEFINE SCENE("Escena 1", WIDTH_CHUNK + 2, LENGH_CHUNK-5) {
         LIST<CHUNK> chunks
 
         FOR i FROM 0 TO 2 {

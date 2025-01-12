@@ -79,23 +79,23 @@ class gec_parserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by gec_parserParser#expression.
-    def visitExpression(self, ctx:gec_parserParser.ExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by gec_parserParser#expression_aux.
-    def visitExpression_aux(self, ctx:gec_parserParser.Expression_auxContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by gec_parserParser#numeric_expression.
     def visitNumeric_expression(self, ctx:gec_parserParser.Numeric_expressionContext):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by gec_parserParser#numeric_expression_aux.
+    def visitNumeric_expression_aux(self, ctx:gec_parserParser.Numeric_expression_auxContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by gec_parserParser#string_expression.
     def visitString_expression(self, ctx:gec_parserParser.String_expressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by gec_parserParser#string_expression_aux.
+    def visitString_expression_aux(self, ctx:gec_parserParser.String_expression_auxContext):
         return self.visitChildren(ctx)
 
 

@@ -10,13 +10,11 @@ define_setup:
 	DEFINE SETUP LPAREN RPAREN LBRACE statement* RBRACE;
 
 define_world:
-	DEFINE WORLD LPAREN (STRING_LITERAL | ID) RPAREN LBRACE define_scene* RBRACE;
+	DEFINE WORLD LPAREN string_expression RPAREN LBRACE define_scene* RBRACE;
 
 define_scene:
-	DEFINE SCENE LPAREN (STRING_LITERAL | ID) COMMA (
-		INT_LITERAL
-		| ID
-	) COMMA (INT_LITERAL | ID) RPAREN LBRACE statement* RBRACE;
+	DEFINE SCENE LPAREN string_expression COMMA numeric_expression COMMA numeric_expression RPAREN
+		LBRACE statement* RBRACE;
 
 statement:
 	assignment
@@ -28,12 +26,13 @@ statement:
 	| add_statement;
 
 chunk_constructor:
-	CHUNK LPAREN expression COMMA expression COMMA expression COMMA expression COMMA expression
-		COMMA ID RPAREN;
+	CHUNK LPAREN numeric_expression* COMMA numeric_expression COMMA numeric_expression COMMA
+		numeric_expression COMMA string_expression COMMA ID RPAREN;
 
 gameobject_constructor:
-	GAMEOBJECT LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
-	| GAMEOBJECT LPAREN expression COMMA expression COMMA expression RPAREN;
+	GAMEOBJECT LPAREN string_expression COMMA numeric_expression COMMA numeric_expression COMMA
+		numeric_expression RPAREN
+	| GAMEOBJECT LPAREN string_expression COMMA numeric_expression COMMA numeric_expression RPAREN;
 
 define_list: (LIST LT (CHUNK | GAMEOBJECT) GT) ID ASSIGN array;
 
@@ -53,20 +52,27 @@ for_loop_number:
 
 for_loop_list: FOR ID IN ID LBRACE statement* RBRACE;
 
-assignment: (INT | STRING | FLOAT |) ID ASSIGN expression
+assignment: (INT | FLOAT |) ID ASSIGN numeric_expression
+	| (STRING |) ID ASSIGN string_expression
 	| (CHUNK |) ID ASSIGN chunk_constructor
 	| (GAMEOBJECT |) ID ASSIGN gameobject_constructor;
 
-expression: expression_aux (OP_ARIT expression_aux)*;
+numeric_expression:
+	numeric_expression_aux (OP_ARIT numeric_expression_aux)*;
 
-expression_aux:
-	numeric_expression
-	| string_expression
-	| LPAREN expression RPAREN;
+numeric_expression_aux:
+	INT_LITERAL
+	| FLOAT_LITERAL
+	| ID
+	| LPAREN numeric_expression RPAREN;
 
-numeric_expression: INT_LITERAL | FLOAT_LITERAL | ID;
+string_expression:
+	string_expression_aux (OP_ARIT string_expression_aux)*;
 
-string_expression: STRING_LITERAL | ID;
+string_expression_aux:
+	STRING_LITERAL
+	| ID
+	| LPAREN string_expression RPAREN;
 
 declaration: (
 		INT

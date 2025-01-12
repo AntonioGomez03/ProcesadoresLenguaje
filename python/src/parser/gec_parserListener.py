@@ -134,24 +134,6 @@ class gec_parserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by gec_parserParser#expression.
-    def enterExpression(self, ctx:gec_parserParser.ExpressionContext):
-        pass
-
-    # Exit a parse tree produced by gec_parserParser#expression.
-    def exitExpression(self, ctx:gec_parserParser.ExpressionContext):
-        pass
-
-
-    # Enter a parse tree produced by gec_parserParser#expression_aux.
-    def enterExpression_aux(self, ctx:gec_parserParser.Expression_auxContext):
-        pass
-
-    # Exit a parse tree produced by gec_parserParser#expression_aux.
-    def exitExpression_aux(self, ctx:gec_parserParser.Expression_auxContext):
-        pass
-
-
     # Enter a parse tree produced by gec_parserParser#numeric_expression.
     def enterNumeric_expression(self, ctx:gec_parserParser.Numeric_expressionContext):
         pass
@@ -161,12 +143,30 @@ class gec_parserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by gec_parserParser#numeric_expression_aux.
+    def enterNumeric_expression_aux(self, ctx:gec_parserParser.Numeric_expression_auxContext):
+        pass
+
+    # Exit a parse tree produced by gec_parserParser#numeric_expression_aux.
+    def exitNumeric_expression_aux(self, ctx:gec_parserParser.Numeric_expression_auxContext):
+        pass
+
+
     # Enter a parse tree produced by gec_parserParser#string_expression.
     def enterString_expression(self, ctx:gec_parserParser.String_expressionContext):
         pass
 
     # Exit a parse tree produced by gec_parserParser#string_expression.
     def exitString_expression(self, ctx:gec_parserParser.String_expressionContext):
+        pass
+
+
+    # Enter a parse tree produced by gec_parserParser#string_expression_aux.
+    def enterString_expression_aux(self, ctx:gec_parserParser.String_expression_auxContext):
+        pass
+
+    # Exit a parse tree produced by gec_parserParser#string_expression_aux.
+    def exitString_expression_aux(self, ctx:gec_parserParser.String_expression_auxContext):
         pass
 
 
