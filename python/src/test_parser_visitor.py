@@ -18,10 +18,19 @@ class SymbolTable:
     def set_value(self, name, value, type_key, context):
         self.table[name] = {"value": value, "type": type_key, "context": context}
 
-    def get_value(self, name):
+    def get_value(self, name, context=None):
         # TODO: Filter by other criteria
         if name in self.table:
-            return self.table[name]["value"]
+            # Check if the context is the same
+            if context is not None:
+                if self.table[name]["context"] == "SETUP" or self.table[name]["context"] == context:
+                    return self.table[name]["value"]
+                raise ValueError(f"Variable '{name}' no definida en el contexto actual.")
+        raise ValueError(f"Variable '{name}' no definida.")
+    
+    def get_type(self, name):
+        if name in self.table:
+            return self.table[name]["type"]
         raise ValueError(f"Variable '{name}' no definida.")
 
     def __str__(self):
@@ -55,6 +64,7 @@ def world_to_json(world, path):
 class MyCustomVisitor(Visitor):
     def __init__(self):
         self.symbol_table = SymbolTable()
+        self.context = "Context"
 
     def visitProgram(self, ctx):
             self.symbol_table = SymbolTable()
@@ -62,45 +72,48 @@ class MyCustomVisitor(Visitor):
                 self.visit(child)
             # Optionally handle output or final steps here
             print(self.symbol_table, "\n")
-            world = self.symbol_table.get_value("World")
+            world = self.symbol_table.get_value("World", self.context)
             world_to_json(world, "world.json")
 
     def visitDefine_setup(self, ctx):
+        self.context = "SETUP"
         for c in ctx.statement():
             self.visit(c)
 
     def visitDefine_world(self, ctx):
+        self.context = "WORLD"
         w_name = ctx.getChild(3).getText()
         if isinstance(w_name, str) and len(w_name) > 1 and w_name[0] == '"' and w_name[-1] == '"':
             w_name = w_name[1:-1]
         else:
-            w_name = self.symbol_table.get_value(w_name)
+            w_name = self.symbol_table.get_value(w_name, self.context)
         world_obj = World(w_name)
         for sc in ctx.define_scene():
             s = self.visit(sc)
             if s:
                 world_obj.add_scene(s)
         # Store or keep reference as needed
-        self.symbol_table.set_value("World", world_obj, "WORLD", "Context")
+        self.symbol_table.set_value("World", world_obj, "WORLD", self.context)
 
     def visitDefine_scene(self, ctx):
         s_name = ctx.getChild(3).getText()
+        self.context = s_name
         if isinstance(s_name, str) and len(s_name) > 1 and s_name[0] == '"' and s_name[-1] == '"':
             s_name = s_name[1:-1]
         else:
-            s_name = self.symbol_table.get_value(s_name)
+            s_name = self.symbol_table.get_value(s_name, self.context)
         
         width_chunk = ctx.getChild(5).getText()
         if isinstance(width_chunk, str) and len(width_chunk) > 1 and width_chunk[0] == '"' and width_chunk[-1] == '"':
             width_chunk = width_chunk[1:-1]
         else:
-            width_chunk = self.symbol_table.get_value(width_chunk)
+            width_chunk = self.symbol_table.get_value(width_chunk, self.context)
                                                       
         height_chunk = ctx.getChild(7).getText()
         if isinstance(height_chunk, str) and len(height_chunk) > 1 and height_chunk[0] == '"' and height_chunk[-1] == '"':
             height_chunk = height_chunk[1:-1]
         else:
-            height_chunk = self.symbol_table.get_value(height_chunk)
+            height_chunk = self.symbol_table.get_value(height_chunk,  self.context)
 
         scene = Scene(s_name, width_chunk, height_chunk)
         for c in ctx.statement():
@@ -110,7 +123,7 @@ class MyCustomVisitor(Visitor):
                 scene.add_chunks(s)
             elif s:
                 scene.add_chunk(s)                
-        self.symbol_table.set_value(s_name, scene, "SCENE", "Context")
+        self.symbol_table.set_value(s_name, scene, "SCENE", self.context)
         return scene                
         
     def visitStatement(self, ctx):
@@ -125,30 +138,38 @@ class MyCustomVisitor(Visitor):
         if val is None:
             if ctx.chunk_constructor():
                 val = self.visit(ctx.chunk_constructor())
-                self.symbol_table.set_value(name, val, "CHUNK", "Context")
+                self.symbol_table.set_value(name, val, "CHUNK", self.context)
             elif ctx.gameobject_constructor():
                 val = self.visit(ctx.gameobject_constructor())
-                self.symbol_table.set_value(name, val, "GAMEOBJECT", "Context")
+                self.symbol_table.set_value(name, val, "GAMEOBJECT", self.context)
         else:
-            self.symbol_table.set_value(name, val, self.get_type(val), "Context")
+            self.symbol_table.set_value(name, val, self.get_type(val), self.context)
 
     def visitDefine_list(self, ctx):
         arr = self.visit(ctx.array())
-        ty = "LIST"
-        self.symbol_table.set_value(ctx.ID().getText(), arr, ty, "Context")
+        ty = "LIST<" + ctx.getChild(2).getText() + ">"
+        self.symbol_table.set_value(ctx.ID().getText(), arr, ty, self.context)
 
     def visitAppend_statement(self, ctx):
         list_name = ctx.ID(0).getText()
         elem = None
+        elem_type = None
         if ctx.gameobject_constructor():
             elem = self.visit(ctx.gameobject_constructor())
+            elem_type = "GAMEOBJECT"
         elif ctx.chunk_constructor():
             elem = self.visit(ctx.chunk_constructor())
+            elem_type = "CHUNK"
+        else: 
+            elem = self.symbol_table.get_value(ctx.ID(1).getText(), self.context)
+            elem_type = self.symbol_table.get_type(ctx.ID(1).getText())
+        lst = self.symbol_table.get_value(list_name, self.context)
+        ty = self.symbol_table.get_type(list_name)
+        if elem_type in ty:
+            lst.append(elem)
         else:
-            elem = self.symbol_table.get_value(ctx.ID(1).getText())
-        lst = self.symbol_table.get_value(list_name)
-        lst.append(elem)
-        self.symbol_table.set_value(list_name, lst, "LIST", "Context")
+            raise ValueError(f"El tipo de la lista {list_name} no coincide con el tipo del elemento a agregar.")
+        self.symbol_table.set_value(list_name, lst, ty, self.context)
 
     def visitFor_loop_number(self, ctx):
         # Simplified approach
@@ -158,7 +179,7 @@ class MyCustomVisitor(Visitor):
         statements = ctx.statement()
         result = []
         for i in range(start, end + 1):
-            self.symbol_table.set_value(var_name, i, "INT", "Context")
+            self.symbol_table.set_value(var_name, i, "INT", self.context)
             for st in statements:
                 s = self.visit(st)
                 result.append(s)
@@ -169,10 +190,10 @@ class MyCustomVisitor(Visitor):
     def visitFor_loop_list(self, ctx):
         var_name = ctx.ID(0).getText()
         list_var = ctx.ID(1).getText()
-        arr = self.symbol_table.get_value(list_var)
+        arr = self.symbol_table.get_value(list_var,  self.context)
         result = []
         for x in arr:
-            self.symbol_table.set_value(var_name, x, self.get_type(x), "Context")
+            self.symbol_table.set_value(var_name, x, self.get_type(x), self.context)
             for st in ctx.statement():
                 s = self.visit(st)
                 result.append(s)
@@ -181,13 +202,15 @@ class MyCustomVisitor(Visitor):
 
     def visitDeclaration(self, ctx):
         tp = ctx.getChild(0).getText()
+        if tp.startswith("LIST"):
+            tp += "<" + ctx.getChild(2).getText() + ">"
         nm = ctx.ID().getText()
-        self.symbol_table.set_value(nm, [], tp, "Context")
+        self.symbol_table.set_value(nm, [], tp, self.context)
 
     def visitAdd_statement(self, ctx):
         temp = None
         if ctx.ID():
-            temp = self.symbol_table.get_value(ctx.ID().getText())
+            temp = self.symbol_table.get_value(ctx.ID().getText(),  self.context)
         else:
             temp = self.visit(ctx.chunk_constructor())
         return temp
@@ -199,7 +222,7 @@ class MyCustomVisitor(Visitor):
         sc = self._extract_value(ctx.getChild(6))
         hm = self._extract_value(ctx.getChild(8))
         tx = self._extract_value(ctx.getChild(10))
-        objs = self.symbol_table.get_value(ctx.getChild(12).getText())
+        objs = self.symbol_table.get_value(ctx.getChild(12).getText(), self.context)
         return Chunk(posx, posy, sc, hm, tx, objs)
 
     def visitGameobject_constructor(self, ctx):
@@ -244,7 +267,7 @@ class MyCustomVisitor(Visitor):
             pass
         if child.getText() == '(':
             return self.visit(ctx.expression())
-        return self.symbol_table.get_value(child.getText())
+        return self.symbol_table.get_value(child.getText(), self.context)
 
     def _extract_value(self, node):
         t = node.getText()
@@ -258,7 +281,7 @@ class MyCustomVisitor(Visitor):
             return float(t)
         except:
             pass
-        return self.symbol_table.get_value(t)
+        return self.symbol_table.get_value(t, self.context)
 
     def get_type(self, obj):
         if isinstance(obj, int):
