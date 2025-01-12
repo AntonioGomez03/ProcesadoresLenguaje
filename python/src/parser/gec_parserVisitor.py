@@ -89,6 +89,16 @@ class gec_parserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by gec_parserParser#numeric_expression.
+    def visitNumeric_expression(self, ctx:gec_parserParser.Numeric_expressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by gec_parserParser#string_expression.
+    def visitString_expression(self, ctx:gec_parserParser.String_expressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by gec_parserParser#declaration.
     def visitDeclaration(self, ctx:gec_parserParser.DeclarationContext):
         return self.visitChildren(ctx)

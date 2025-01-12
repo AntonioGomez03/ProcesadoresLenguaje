@@ -217,31 +217,67 @@ class MyCustomVisitor(Visitor):
 
     def visitChunk_constructor(self, ctx):
         # Minimal extraction
-        posx = self._extract_value(ctx.getChild(2))
-        posy = self._extract_value(ctx.getChild(4))
-        sc = self._extract_value(ctx.getChild(6))
-        hm = self._extract_value(ctx.getChild(8))
-        tx = self._extract_value(ctx.getChild(10))
-        objs = self.symbol_table.get_value(ctx.getChild(12).getText(), self.context)
+        posx = self.visit(ctx.expression(0))
+        if not isinstance(posx, int):
+            raise ValueError("Posx debe ser un entero")
+        
+        posy = self.visit(ctx.expression(1))
+        if not isinstance(posy, int):
+            raise ValueError("Posy debe ser un entero")
+        
+        sc = self.visit(ctx.expression(2))
+        if not isinstance(sc, float) and not isinstance(sc, int):
+            raise ValueError("Scale debe ser un flotante")
+        
+        hm = self.visit(ctx.expression(3))
+        if not isinstance(hm, float) and not isinstance(hm, int):
+            raise ValueError("Height_multiplier debe ser un entero")
+        
+        tx = self.visit(ctx.expression(4))
+        if not isinstance(tx, str):
+            raise ValueError("Texture debe ser un string")
+        
+        objs = self.symbol_table.get_value(ctx.ID().getText(), self.context)
+        if not isinstance(objs, list):
+            raise ValueError("GameObjects debe ser una lista")
         return Chunk(posx, posy, sc, hm, tx, objs)
 
     def visitGameobject_constructor(self, ctx):
         # Minimal approach for variations
-        model = self._extract_value(ctx.getChild(2))
-        density = self._extract_value(ctx.getChild(4))
+        model = self.visit(ctx.expression(0))
+        if not isinstance(model, str):
+            raise ValueError("Modelo debe ser un string")
+        
+        density = self.visit(ctx.expression(1))
+        if not isinstance(density, float) and not isinstance(density, int):
+            raise ValueError("Density debe ser un flotante")
+        
         if ctx.getChildCount() == 9:
-            min_s = self._extract_value(ctx.getChild(6))
-            max_s = self._extract_value(ctx.getChild(8))
+            min_s = self.visit(ctx.expression(2))
+            if not isinstance(min_s, float) and not isinstance(min_s, int):
+                raise ValueError("Min_scale debe ser un flotante")
+            
+            max_s = self.visit(ctx.expression(3))
+            if not isinstance(max_s, float) and not isinstance(max_s, int):
+                raise ValueError("Max_scale debe ser un flotante")
+            
             return GameObject(model, density, min_s, max_s)
         else:
-            scale = self._extract_value(ctx.getChild(6))
+            scale = self.visit(ctx.expression(2))
+            if not isinstance(scale, float) and not isinstance(scale, int):
+                raise ValueError("Scale debe ser un flotante")
+            
             return GameObject(model, density, scale)
 
     def visitArray(self, ctx):
         out = []
         if ctx.getChildCount() > 2:
             for i in range(1, ctx.getChildCount() - 1, 2):
-                out.append(self._extract_value(ctx.getChild(i)))
+                try:
+                    out.append(self.symbol_table.get_value(ctx.getChild(i).getText(), self.context))
+                except:
+                    out.append(self.visit(ctx.getChild(i)))
+
         return out
 
     def visitExpression(self, ctx):
@@ -257,16 +293,25 @@ class MyCustomVisitor(Visitor):
 
     def visitExpression_aux(self, ctx):
         child = ctx.getChild(0)
-        if child.getText().startswith('"'):
-            return child.getText()
+        e = self.visit(child)
+        if e is None:
+            return self.visit(ctx.expression())
+        return e
+    
+    def visitNumeric_expression(self, ctx):
+        child = ctx.getChild(0)
         if child.getText().isdigit():
             return int(child.getText())
         try:
             return float(child.getText())
         except ValueError:
             pass
-        if child.getText() == '(':
-            return self.visit(ctx.expression())
+        return self.symbol_table.get_value(child.getText(), self.context)
+    
+    def visitString_expression(self, ctx):
+        child = ctx.getChild(0)
+        if child.getText().startswith('"'):
+            return child.getText()[1:-1]
         return self.symbol_table.get_value(child.getText(), self.context)
 
     def _extract_value(self, node):

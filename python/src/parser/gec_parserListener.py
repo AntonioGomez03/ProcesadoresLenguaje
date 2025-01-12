@@ -152,6 +152,24 @@ class gec_parserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by gec_parserParser#numeric_expression.
+    def enterNumeric_expression(self, ctx:gec_parserParser.Numeric_expressionContext):
+        pass
+
+    # Exit a parse tree produced by gec_parserParser#numeric_expression.
+    def exitNumeric_expression(self, ctx:gec_parserParser.Numeric_expressionContext):
+        pass
+
+
+    # Enter a parse tree produced by gec_parserParser#string_expression.
+    def enterString_expression(self, ctx:gec_parserParser.String_expressionContext):
+        pass
+
+    # Exit a parse tree produced by gec_parserParser#string_expression.
+    def exitString_expression(self, ctx:gec_parserParser.String_expressionContext):
+        pass
+
+
     # Enter a parse tree produced by gec_parserParser#declaration.
     def enterDeclaration(self, ctx:gec_parserParser.DeclarationContext):
         pass

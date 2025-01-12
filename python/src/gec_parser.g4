@@ -28,20 +28,12 @@ statement:
 	| add_statement;
 
 chunk_constructor:
-	CHUNK LPAREN (ID | INT_LITERAL) COMMA (ID | INT_LITERAL) COMMA (
-		ID
-		| FLOAT_LITERAL
-	) COMMA (ID | FLOAT_LITERAL) COMMA (ID | STRING_LITERAL) COMMA ID RPAREN;
+	CHUNK LPAREN expression COMMA expression COMMA expression COMMA expression COMMA expression
+		COMMA ID RPAREN;
 
 gameobject_constructor:
-	GAMEOBJECT LPAREN (ID | STRING_LITERAL) COMMA (
-		ID
-		| INT_LITERAL
-	) COMMA (ID | FLOAT_LITERAL) COMMA (ID | FLOAT_LITERAL) RPAREN
-	| GAMEOBJECT LPAREN (ID | STRING_LITERAL) COMMA (
-		ID
-		| INT_LITERAL
-	) COMMA (ID | FLOAT_LITERAL) RPAREN;
+	GAMEOBJECT LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+	| GAMEOBJECT LPAREN expression COMMA expression COMMA expression RPAREN;
 
 define_list: (LIST LT (CHUNK | GAMEOBJECT) GT) ID ASSIGN array;
 
@@ -68,11 +60,13 @@ assignment: (INT | STRING | FLOAT |) ID ASSIGN expression
 expression: expression_aux (OP_ARIT expression_aux)*;
 
 expression_aux:
-	STRING_LITERAL
-	| INT_LITERAL
-	| FLOAT_LITERAL
-	| ID
+	numeric_expression
+	| string_expression
 	| LPAREN expression RPAREN;
+
+numeric_expression: INT_LITERAL | FLOAT_LITERAL | ID;
+
+string_expression: STRING_LITERAL | ID;
 
 declaration: (
 		INT
