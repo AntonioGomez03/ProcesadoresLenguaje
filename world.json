@@ -215,35 +215,6 @@
                                 "scale": 1.2
                             }
                         ]
-                    },
-                    {
-                        "pos_x": 0,
-                        "pos_y": 0,
-                        "scale": 20.0,
-                        "height_multiplier": 7.5,
-                        "texture": "src/textures/grass",
-                        "gameobjects": [
-                            {
-                                "model": "src/models/tree",
-                                "density": 10,
-                                "scale": 2.0
-                            },
-                            {
-                                "model": "src/models/rock",
-                                "density": 5,
-                                "scale": 1.0
-                            },
-                            {
-                                "model": "src/models/house",
-                                "density": 10,
-                                "scale": 2.0
-                            },
-                            {
-                                "model": "src/models/car",
-                                "density": 10,
-                                "scale": 2.0
-                            }
-                        ]
                     }
                 ]
             },

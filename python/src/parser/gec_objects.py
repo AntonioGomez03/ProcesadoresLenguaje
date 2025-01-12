@@ -54,13 +54,20 @@ class Scene:
         self.chunks = []
 
     def add_chunk(self, chunk: Chunk):
-        # TODO: Check if chunk is valid
-        self.chunks.append(chunk)
+        if self._chunk_is_valid(chunk):
+            self.chunks.append(chunk)
 
     def add_chunks(self, chunks: list):
-        # TODO: Check if chunks are valid
         for c in chunks:
-            self.add_chunk(c)
+            if self._chunk_is_valid(c):
+                self.add_chunk(c)
+
+    def _chunk_is_valid(self, chunk: Chunk):
+        for c in self.chunks:
+            if c.pos_x == chunk.pos_x and c.pos_y == chunk.pos_y:
+                raise ValueError("Chunk already exists")
+                return False
+        return True
 
     def to_dict(self):
         return {
@@ -82,11 +89,17 @@ class World:
         self.scenes = []
 
     def add_scene(self, scene: Scene):
-        # TODO: Check if scene is valid
-        self.scenes.append(scene)
+        if self._scene_is_valid(scene):
+            self.scenes.append(scene)
 
     def get_scenes(self):
         return self.scenes
+    
+    def _scene_is_valid(self, scene: Scene):
+        for s in self.scenes:
+            if s.get_name() == scene.get_name():
+                return False
+        return True
 
     def to_dict(self):
         return {
