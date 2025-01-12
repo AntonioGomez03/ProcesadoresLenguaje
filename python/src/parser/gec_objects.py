@@ -54,9 +54,11 @@ class Scene:
         self.chunks = []
 
     def add_chunk(self, chunk: Chunk):
+        # TODO: Check if chunk is valid
         self.chunks.append(chunk)
 
     def add_chunks(self, chunks: list):
+        # TODO: Check if chunks are valid
         for c in chunks:
             self.add_chunk(c)
 
@@ -80,6 +82,7 @@ class World:
         self.scenes = []
 
     def add_scene(self, scene: Scene):
+        # TODO: Check if scene is valid
         self.scenes.append(scene)
 
     def get_scenes(self):

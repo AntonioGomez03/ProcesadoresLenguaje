@@ -16,9 +16,11 @@ class SymbolTable:
         self.table = {}
 
     def set_value(self, name, value, type_key, context):
+        # TODO: Check if variable is already defined
         self.table[name] = {"value": value, "type": type_key, "context": context}
 
     def get_value(self, name):
+            # TODO: Filter by other criteria
             if name in self.table:
                 return self.table[name]["value"]
             raise ValueError(f"Variable '{name}' no definida.")
