@@ -56,6 +56,10 @@ class Scene:
     def add_chunk(self, chunk: Chunk):
         self.chunks.append(chunk)
 
+    def add_chunks(self, chunks: list):
+        for c in chunks:
+            self.add_chunk(c)
+
     def to_dict(self):
         return {
             "name": self.name,

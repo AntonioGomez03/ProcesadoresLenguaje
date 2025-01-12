@@ -1,0 +1,288 @@
+{
+    "world": {
+        "name": "Mi Mundo",
+        "scenes": [
+            {
+                "name": "Escena 1",
+                "width_chunk": 20,
+                "length_chunk": 20,
+                "chunks": [
+                    {
+                        "pos_x": 0,
+                        "pos_y": 0,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 1,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 2,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 3,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 4,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 5,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 6,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 7,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 8,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 9,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 10,
+                        "scale": 15.0,
+                        "height_multiplier": 10.0,
+                        "texture": "src/textures/mountain",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 15,
+                                "scale": 1.8
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 2,
+                                "scale": 1.2
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 0,
+                        "scale": 20.0,
+                        "height_multiplier": 7.5,
+                        "texture": "src/textures/grass",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 10,
+                                "scale": 2.0
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 5,
+                                "scale": 1.0
+                            },
+                            {
+                                "model": "src/models/house",
+                                "density": 10,
+                                "scale": 2.0
+                            },
+                            {
+                                "model": "src/models/car",
+                                "density": 10,
+                                "scale": 2.0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Escena 2",
+                "width_chunk": 20,
+                "length_chunk": 20,
+                "chunks": [
+                    {
+                        "pos_x": 0,
+                        "pos_y": 0,
+                        "scale": 20.0,
+                        "height_multiplier": 7.5,
+                        "texture": "src/textures/grass",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 10,
+                                "scale": 2.0
+                            },
+                            {
+                                "model": "src/models/rock",
+                                "density": 5,
+                                "scale": 1.0
+                            },
+                            {
+                                "model": "src/models/house",
+                                "density": 10,
+                                "scale": 2.0
+                            },
+                            {
+                                "model": "src/models/car",
+                                "density": 10,
+                                "scale": 2.0
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

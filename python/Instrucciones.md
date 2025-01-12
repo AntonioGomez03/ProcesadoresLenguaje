@@ -32,3 +32,13 @@ python3 python/src/test_parser.py examples/example1.gec
 >[!NOTE]
 > Para ejecutar el script del parser se deberá de tener como mínimo la versión 3.10 de python instalada.
 
+
+## 5. Probar la semántica
+Se debe estar situado en la raíz del proyecto y ejecutar los siguientes comandos:
+```
+cd python/src 
+antlr4 -Dlanguage=Python3 -o parser gec_lexer.g4
+antlr4 -Dlanguage=Python3 -o parser gec_parser.g4 -visitor
+cd ../..
+python3 python/src/test_parser_visitor.py examples/example1.gec
+```
