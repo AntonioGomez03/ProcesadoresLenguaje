@@ -48,7 +48,7 @@ DEFINE WORLD("Mi Mundo"){
         } 
 
         /* Añadir un chunk global */
-        ADD global_chunk
+        // ADD global_chunk
 	}
 
     /* Definición de escena */

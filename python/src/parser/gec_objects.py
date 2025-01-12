@@ -66,7 +66,6 @@ class Scene:
         for c in self.chunks:
             if c.pos_x == chunk.pos_x and c.pos_y == chunk.pos_y:
                 raise ValueError("Chunk already exists")
-                return False
         return True
 
     def to_dict(self):

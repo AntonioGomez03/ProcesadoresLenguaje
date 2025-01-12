@@ -62,7 +62,7 @@ class MyCustomVisitor(Visitor):
                 self.visit(child)
             # Optionally handle output or final steps here
             print(self.symbol_table, "\n")
-            world = self.symbol_table.get_value("Mi Mundo")
+            world = self.symbol_table.get_value("World")
             world_to_json(world, "world.json")
 
     def visitDefine_setup(self, ctx):
@@ -81,7 +81,7 @@ class MyCustomVisitor(Visitor):
             if s:
                 world_obj.add_scene(s)
         # Store or keep reference as needed
-        self.symbol_table.set_value(w_name, world_obj, "WORLD", "Context")
+        self.symbol_table.set_value("World", world_obj, "WORLD", "Context")
 
     def visitDefine_scene(self, ctx):
         s_name = ctx.getChild(3).getText()
