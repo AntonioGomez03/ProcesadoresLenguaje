@@ -7,8 +7,8 @@ const Generate = () => {
     const handleGenerateClick = () => {
         // Obtener el código del componente CodeEditor
         let code = document.querySelector(".code-editor-textarea").value;
-
-        // Endpoint de la API /generate_project
+        console.log(code);
+        // Send the code to the backend for processing
         fetch("http://localhost:8000/generate_project", {
             method: "POST",
             headers: {
@@ -40,9 +40,8 @@ const Generate = () => {
             .catch(error => {
                 console.error("Error:", error);
             });
+
     };
-
-
 
     return (
         <div className="page-container">
