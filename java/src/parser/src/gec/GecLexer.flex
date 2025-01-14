@@ -40,6 +40,11 @@ private int c_column;
    return new Symbol(type, yyline ,yycolumn, yytext());
  }
 
+ public Symbol symbol(int type, Object value){ 
+	return new Symbol(type,yyline,yycolumn,value); 
+} 
+ 
+
 %} 
 
 /* Fin de las declaraciones */
@@ -76,9 +81,9 @@ FLOAT   {return symbol(sym.FLOAT);}
 STRING  {return symbol(sym.STRING);}
 
 {ID} {return symbol(sym.ID);}
-{INT_LITERAL} {return symbol(sym.INT_LITERAL);}
-{FLOAT_LITERAL} {return symbol(sym.FLOAT_LITERAL);}
-{STRING_LITERAL} {return symbol(sym.STRING_LITERAL);}
+{INT_LITERAL} {return symbol(sym.INT_LITERAL, new Integer(yytext()));}
+{FLOAT_LITERAL} {return symbol(sym.FLOAT_LITERAL, new Float(yytext()));}
+{STRING_LITERAL} {return symbol(sym.STRING_LITERAL, new String(yytext()));}
 {OP_ARIT} {return symbol(sym.OP_ARIT);}
 {START_COMMENT}  {yybegin(COMMENT);}
 \( {return symbol(sym.LPAREN);}
