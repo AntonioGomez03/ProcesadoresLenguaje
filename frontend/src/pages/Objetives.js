@@ -4,7 +4,7 @@ import logo from "../assets/logo_geocraft.png";
 import terrainExample from "../assets/terrain_example.jpg";
 import organizacionProyecto from "../assets/organizacion_proyecto.png";
 
-const About = () => {
+const Objetives = () => {
 
     const markdownContent = `
 # <img src="${logo}" alt="Emoji" width="30" style="vertical-align: middle;" /> GeoCraft
@@ -74,12 +74,12 @@ La idea del proyecto consiste en tomar un código escrito en nuestro lenguaje es
     return (
         <div className="page-container">
             <Navbar />
-            <div className="about-content-container">
-                <h1>About</h1>
+            <div className="objetives-content-container">
+                <h1>Objetives</h1>
                 <InfoCard markdownContent={markdownContent} />
             </div>
         </div>
     );
 };
 
-export default About;
+export default Objetives;

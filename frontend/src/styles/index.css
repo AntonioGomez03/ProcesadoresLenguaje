@@ -183,6 +183,7 @@ body {
 }
 
 .about-content-container,
+.objetives-content-container,
 .manual-content-container,
 .generate-content-container {
   display: flex;
