@@ -5,7 +5,7 @@ import CodeEditor from "../components/CodeEditor";
 const Generate = () => {
 
     const handleGenerateClick = () => {
-        // Obtain the code from the CodeEditor component
+        // Obtener el código del componente CodeEditor
         let code = document.querySelector(".code-editor-textarea").value;
         console.log(code);
         // Send the code to the backend for processing
@@ -14,17 +14,34 @@ const Generate = () => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ code: code })
+            body: JSON.stringify({
+                code: code
+            })
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
+            .then(response => {
+                // Verificar si la respuesta es exitosa
+                if (response.ok) {
+                    return response.blob(); // Convertir la respuesta a un blob (archivo)
+                } else {
+                    throw new Error("Error al generar el proyecto");
+                }
+            })
+            .then(blob => {
+                // Crear un enlace para descargar el archivo
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "project.zip"; // Nombre sugerido para el archivo
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url); // Limpiar URL del blob
             })
             .catch(error => {
                 console.error("Error:", error);
             });
-    }
 
+    };
 
     return (
         <div className="page-container">
