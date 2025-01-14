@@ -16,36 +16,31 @@ const CodeEditor = () => {
     const textareaRef = useRef(null);
     const codeRef = useRef(null);
 
-    const initialCode = `DEFINE SETUP(){
-    /* Definición del setup */
-    GAMEOBJECT global_object1 = GAMEOBJECT("src/models/tree", 10, 2.0);
-    LIST<GAMEOBJECT> global_objects = [global_object1];
+    const initialCode = `DEFINE SETUP() {
+    INT WIDTH_CHUNK = 20
+    INT LENGH_CHUNK = 20
+    LIST<GAMEOBJECT> global_gameobjects = []
+    GAMEOBJECT global_object1 = GAMEOBJECT("src/models/"+"tree", 10, 2.0)
+    APPEND global_gameobjects global_object1
 
-    /* Definición de los chunks */
-    CHUNK global_chunk1 =  CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects);
+    CHUNK global_chunk = CHUNK(0,1,20.0, 7.5, "src/textures/grass", global_gameobjects)
+    CHUNK global_chunk2 = CHUNK(0,2,20.0, 7.5, "src/textures/grass", global_gameobjects)
+    LIST<CHUNK> global_chunks = [global_chunk, global_chunk2]
 }
 
-DEFINE WORLD("Mi mundo"){
-    /* Definición de escena */
-    DEFINE SCENE("Escena 1"){
-        /* Definición de objetos */
-        GAMEOBJECT object1 = GAMEOBJECT("'src/models/tree'", 10, 2.0);
-        LIST<GAMEOBJECT> objects = [object1];
-
-        /* Definición de chunks */
+DEFINE WORLD("Mi Mundo") {
+    DEFINE SCENE("Escena 1", WIDTH_CHUNK, LENGH_CHUNK) {
         LIST<CHUNK> chunks
-        FOR i FROM 0 TO 10{
-            CHUNK c = CHUNK(i,0,20.0, 7.5, "src/textures/grass", objects);
-            APPEND chunks c;
+        CHUNK c
+
+        FOR i FROM 0 TO 2 {
+            c = CHUNK(0,0 + i,30.0, 7.5, "src/textures/grass", global_gameobjects)
+            APPEND chunks c
         }
 
-        /* Agregar los chunks a la escena */
-        FOR c IN chunks{
-            ADD c;
+        FOR c IN chunks {
+            ADD c
         }
-        
-        /* Agregar un chunk global */
-        ADD global_chunk1
     }
 }
      `;
