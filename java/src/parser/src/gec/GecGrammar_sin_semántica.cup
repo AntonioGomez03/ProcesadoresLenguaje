@@ -2,6 +2,8 @@ package gec;
 import java_cup.runtime.*; 
 import java.io.*; 
 
+/* ----------------Seccion componentes de codigo de usuario--------------*/
+
 parser code {: 
     public static void main(String args[]) throws Exception {
 
@@ -18,9 +20,33 @@ parser code {:
 		System.out.println("¡¡ El Análisis es Correcto !!");
 	
 		}
+
+    // Recuperación de errores 
+    public void report_error(String message, Object info) {
+        StringBuffer m = new StringBuffer("Error"); 
+        if (info instanceof java_cup.runtime.Symbol) {
+            java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info); 
+
+            if (s.left >= 0) {
+                m.append(" en la linea " + (s.left +1)); 
+            
+            if (s.right >= 0) 
+                m.append(", columna "+(s.right+1));
+        }
+    }
+    m.append(" : "+message)
+    System.err.println(m)
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info); 
+        System.exit(1);
+    }
 :}
 
 /* ------------Declaracion de la lista de simbolos de la gramatica-----------*/
+
+/* Tokens para palabras reservadas */
 
 terminal DEFINE;
 terminal SETUP;
@@ -39,20 +65,13 @@ terminal INT;
 terminal FLOAT;
 terminal STRING; 
 terminal ID;
-terminal INT_LITERAL;
-terminal FLOAT_LITERAL;
-terminal STRING_LITERAL;
-terminal OP_ARIT; 
-terminal LPAREN;
-terminal RPAREN;
-terminal LBRACE;
-terminal RBRACE;
-terminal LSQUARE;
-terminal RSQUARE;
-terminal COMMA;
-terminal LT;
-terminal GT;
-terminal ASSIGN;    
+
+
+terminal Integer INT_LITERAL;
+terminal Float FLOAT_LITERAL;
+terminal String STRING_LITERAL;
+
+terminal OP_ARIT, LPAREN, RPAREN, LBRACE, RBRACE, LSQUARE, RSQUARE, COMMA, LT, GT, ASSIGN;
 
 non terminal program; 
 non terminal define_setup; 
@@ -82,7 +101,9 @@ non terminal chunk_or_gameobject;
 non terminal rest_array;
 
 
-program ::= define_setup define_world; 
+program ::= define_setup:varGlobales define_world:listaEscenas {: 
+        ArrayList<va
+        :}; 
 
 define_setup ::= DEFINE SETUP LPAREN RPAREN LBRACE statement_list RBRACE 
                 | DEFINE SETUP LPAREN RPAREN LBRACE RBRACE;
@@ -94,18 +115,19 @@ define_world ::=  DEFINE WORLD LPAREN id_or_string_literal RPAREN LBRACE define_
                 | DEFINE WORLD LPAREN id_or_string_literal RPAREN LBRACE RBRACE;
  
 define_scene_list ::= define_scene define_scene_list 
-                    | define_scene ;
+                    | define_scene;
 
 define_scene ::= DEFINE SCENE LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_int_literal RPAREN LBRACE statement_list RBRACE
                 | DEFINE SCENE LPAREN id_or_string_literal COMMA id_or_int_literal COMMA id_or_int_literal RPAREN LBRACE RBRACE; 
 
 statement ::= assignment
-	| define_list
+	| define_list 
 	| append_statement
 	| for_loop_number
 	| for_loop_list
 	| declaration
-	| add_statement;
+	| add_statement
+    | error {: paser.report_error("Error en sintaxis, la sentencia no es valida",null); :};
 
 chunck_constuctor ::= CHUNK LPAREN id_or_int_literal COMMA id_or_int_literal COMMA id_or_float_literal COMMA id_or_float_literal COMMA id_or_string_literal COMMA id_or_array RPAREN; 
 
@@ -124,7 +146,8 @@ array ::= LSQUARE chunck_constuctor rest_array RSQUARE
         | LSQUARE chunck_constuctor RSQUARE
         | LSQUARE gameobject_constructor RSQUARE
         | LSQUARE ID RSQUARE
-        | LSQUARE RSQUARE ; 
+        | LSQUARE RSQUARE 
+        | error {:parser.report_error("Error en la sintaxis, la construccion del array no es correcta", null); :};
 
 rest_array ::= COMMA chunck_constuctor rest_array
             |  COMMA ID rest_array
@@ -147,7 +170,7 @@ for_loop_list ::= FOR ID IN ID LBRACE statement_list RBRACE
                 | FOR ID IN ID LBRACE RBRACE; 
 
 assignment ::= 
-    INT ID ASSIGN expression
+      INT ID ASSIGN expression
     | STRING ID ASSIGN expression
     | FLOAT ID ASSIGN expression 
     | ID ASSIGN expression 

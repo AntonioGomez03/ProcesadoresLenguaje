@@ -1,6 +1,6 @@
 import sys
-from antlr4 import FileStream, CommonTokenStream
-from gec_lexer import gec_lexer  # Importa tu lexer generado
+from antlr4 import FileStream
+from lexer.gec_lexer import gec_lexer  # Importa tu lexer generado
 
 
 def main():

@@ -1,4 +1,4 @@
-// Generated from /home/alex/ProcesadoresLenguaje/python/src/antlr4/gec_lexer.g4 by ANTLR 4.13.1
+// Generated from /home/antonio/Documentos/Universidad/Cuarto/Procesadores de Lenguajes/ProcesadoresLenguaje/python/src/gec_lexer.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
