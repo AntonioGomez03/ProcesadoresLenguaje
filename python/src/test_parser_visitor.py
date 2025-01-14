@@ -15,8 +15,20 @@ class SymbolTable:
     def __init__(self):
         self.table = {}
 
+    def init_value(self, name, value, type_key, context):
+        if not name in self.table or (self.table[name]["context"] != context and self.table[name]["context"] != "SETUP"):
+            self.table[name] = {"value": value, "type": type_key, "context": context}
+        else:
+            raise ValueError(f"Variable '{name}' ya definida.")
+
     def set_value(self, name, value, type_key, context):
-        self.table[name] = {"value": value, "type": type_key, "context": context}
+        try:
+            self.init_value(name, value, type_key, context)
+        except ValueError:
+            if self.table[name]["context"] == context or not self.table[name]["context"] == "SETUP":
+                self.table[name] = {"value": value, "type": type_key, "context": context}
+            else:
+                raise ValueError(f"Variable '{name}' no definida en el contexto actual.")
 
     def get_value(self, name, context=None):
         # TODO: Filter by other criteria
@@ -95,7 +107,7 @@ class MyCustomVisitor(Visitor):
             if s:
                 world_obj.add_scene(s)
         # Store or keep reference as needed
-        self.symbol_table.set_value("World", world_obj, "WORLD", self.context)
+        self.symbol_table.init_value("World", world_obj, "WORLD", self.context)
 
     def visitDefine_scene(self, ctx):
         s_name = self.visit(ctx.string_expression())
@@ -119,7 +131,7 @@ class MyCustomVisitor(Visitor):
                 scene.add_chunks(s)
             elif s:
                 scene.add_chunk(s)                
-        self.symbol_table.set_value(s_name, scene, "SCENE", self.context)
+        self.symbol_table.init_value(s_name, scene, "SCENE", self.context)
         return scene                
         
     def visitStatement(self, ctx):
@@ -129,8 +141,8 @@ class MyCustomVisitor(Visitor):
                 return val
 
     def visitAssignment(self, ctx):
+        ty = ctx.getChild(0).getText()
         name = ctx.ID().getText()
-        # val = self.visit(ctx.expression()) if ctx.expression() else None
         val = None
         try:
             val = self.visit(ctx.numeric_expression())
@@ -145,17 +157,18 @@ class MyCustomVisitor(Visitor):
         if val is None:
             if ctx.chunk_constructor():
                 val = self.visit(ctx.chunk_constructor())
-                self.symbol_table.set_value(name, val, "CHUNK", self.context)
             elif ctx.gameobject_constructor():
                 val = self.visit(ctx.gameobject_constructor())
-                self.symbol_table.set_value(name, val, "GAMEOBJECT", self.context)
-        else:
+
+        if ty == name:
             self.symbol_table.set_value(name, val, self.get_type(val), self.context)
+        else:
+            self.symbol_table.init_value(name, val, self.get_type(val), self.context)
 
     def visitDefine_list(self, ctx):
         arr = self.visit(ctx.array())
         ty = "LIST<" + ctx.getChild(2).getText() + ">"
-        self.symbol_table.set_value(ctx.ID().getText(), arr, ty, self.context)
+        self.symbol_table.init_value(ctx.ID().getText(), arr, ty, self.context)
 
     def visitAppend_statement(self, ctx):
         list_name = ctx.ID(0).getText()
@@ -191,6 +204,8 @@ class MyCustomVisitor(Visitor):
                 s = self.visit(st)
                 result.append(s)
         result = [x for x in result if x is not None]
+        # Delete control variable
+        del self.symbol_table.table[var_name]
         return result
 
 
@@ -205,6 +220,8 @@ class MyCustomVisitor(Visitor):
                 s = self.visit(st)
                 result.append(s)
         result = [x for x in result if x is not None]
+        # Delete control variable
+        del self.symbol_table.table[var_name]
         return result
 
     def visitDeclaration(self, ctx):
@@ -212,7 +229,7 @@ class MyCustomVisitor(Visitor):
         if tp.startswith("LIST"):
             tp += "<" + ctx.getChild(2).getText() + ">"
         nm = ctx.ID().getText()
-        self.symbol_table.set_value(nm, [], tp, self.context)
+        self.symbol_table.init_value(nm, [], tp, self.context)
 
     def visitAdd_statement(self, ctx):
         temp = None
