@@ -1,21 +1,65 @@
 # Libraries
 import json
+import os
+import shutil
+import zipfile
 
 '''
     Method name: main
     Function: itera sobre cada "scene" para generar su script
 '''
 def main():
-    # Cargar archivo JSON 
-    with open('examples/lenguaje_intermedio.json', 'r') as file:
-        data = json.load(file)
+    # Directorio del script
+    current_dir = os.path.dirname(__file__) 
+    json_path = os.path.join(current_dir, '../examples/lenguaje_intermedio.json')
     
-    # Nombre del mundo
-    world_name = data["world"]["name"]
+    # Cargar archivo JSON 
+    with open(json_path, 'r') as file:
+        data = json.load(file)
 
-    # Iterar sobre cada escena
+    # Diccionario para almacenar los scripts
+    scripts = {}
+
+    # Iterar sobre cada escena y generar scripts
     for scene in data["world"]["scenes"]:
-        generate_script(scene)
+        file_name = f"{scene['name']}.cs"  # Nombre del archivo basado en el nombre de la escena
+        scripts[file_name] = generate_script(scene)
+
+    
+    # Carpeta donde se crearán los ficheros antes de zipearlos
+    output_folder =  data["world"]["name"]
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Ruta del archivo ZIP
+    zip_path = f"{output_folder}.zip"
+
+    # Crea los ficheros .cs dentro de la carpeta
+    for file_name, cs_content in scripts.items():
+        cs_output_path = os.path.join(output_folder, file_name)
+        with open(cs_output_path, 'w') as file:
+            file.write(cs_content)
+    
+    # Mover los módulos a la carpeta
+    shutil.copy(f"{current_dir}/modules/mergeTerrainScript.cs", output_folder)
+    shutil.copy(f"{current_dir}/modules/SimpleTerrainGenerator.cs", output_folder)
+
+    # Genera el archivo ZIP
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, _, files in os.walk(output_folder):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, output_folder)  # Mantiene la estructura relativa
+                zipf.write(file_path, arcname)
+
+    # Eliminar la carpeta (quedarnos solo con el ZIP)
+    try:
+        shutil.rmtree(output_folder)
+        print(f"La carpeta '{output_folder}' se eliminó correctamente.")
+    except FileNotFoundError:
+        print(f"La carpeta '{output_folder}' no existe.")
+    except Exception as e:
+        print(f"Error al eliminar la carpeta: {e}")
+
 
 
 
@@ -143,10 +187,7 @@ public class {scene["name"]} : MonoBehaviour {{
     }
 }    
 """
-
-    # Guardar el contenido en un archivo .cs
-    with open(cs_output_path, 'w') as file:
-        file.write(cs_content)
+    return cs_content
 
 
 
@@ -199,25 +240,6 @@ def add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y,  pos_x_end, pos_y_
             );
 
             GameObject newObject = AssetDatabase.LoadAssetAtPath<GameObject>("{model_path}.prefab");
-
-            // Obtener el MeshFilter del GameObject
-            MeshFilter meshFilter = newObject.GetComponent<MeshFilter>();
-
-            if (meshFilter != null)
-            {{
-                // Obtener las dimensiones del Mesh
-                Bounds bounds = meshFilter.mesh.bounds;
-
-                // La altura es la distancia entre el punto más bajo y el más alto en el eje Y
-                float height = bounds.size.y;
-                Debug.Log("Altura del GameObject (Mesh): " + height);
-                // Modificar el Vector3 sumando la altura a Y
-                randomPosition.y += height;
-            }}
-            else
-            {{
-                Debug.LogWarning("El GameObject no tiene un MeshFilter.");
-            }}
 
 
             if (newObject != null) {{
