@@ -34,9 +34,10 @@ async def generate_project(code_request: GenerateProjectRequest):
     visitor.visit(tree)
 
     zip_path = generate_model("world.json")
+    os.remove(temp_file)
     
     return FileResponse(
         zip_path,
         media_type="application/zip",
-        filename="export.zip"
+        filename= zip_path
     )
