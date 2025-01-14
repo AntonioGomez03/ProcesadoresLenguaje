@@ -7,7 +7,25 @@ const Generate = () => {
     const handleGenerateClick = () => {
         // Obtain the code from the CodeEditor component
         let code = document.querySelector(".code-editor-textarea").value;
-        console.log(code);
+        // Api endpoint /generate_project
+        fetch("http://localhost:8000/generate_project", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                code: code
+            })
+        }).then(response => response.json())
+            .then(data => {
+                // If the response is successful, redirect to the download page
+                if (data.status === "success") {
+                    window.location.href = "/download";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
     }
 
 
