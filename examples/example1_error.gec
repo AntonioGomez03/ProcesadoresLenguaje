@@ -57,7 +57,7 @@ DEFINE WORLD("Mi Mundo"){
         INT n = 5
         LIST<CHUNK> chunks
 
-        // Se pruebaa que no se pueden añadir datos de otro tipo
+        // Se prueba que no se pueden añadir datos de otro tipo
         FOR i FROM 0 TO 10 {
             APPEND chunks n
         }

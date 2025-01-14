@@ -1,5 +1,6 @@
 DEFINE SETUP() {
     INT WIDTH_CHUNK = 20
+    WIDTH_CHUNK = 30
     INT LENGH_CHUNK = 20
     LIST<GAMEOBJECT> global_gameobjects = []
     GAMEOBJECT global_object1 = GAMEOBJECT("src/models/"+"tree", 10+3, 2.0*3)
@@ -12,13 +13,24 @@ DEFINE SETUP() {
 
 DEFINE WORLD("Mi Mundo" + " 2") {
     DEFINE SCENE("Escena 1", WIDTH_CHUNK + 2, LENGH_CHUNK-5) {
+        INT n = 5
         LIST<CHUNK> chunks
-
+        CHUNK c
         FOR i FROM 0 TO 2 {
-            CHUNK c = CHUNK(0,0 + i,30.0, 7.5, "src/textures/grass", global_gameobjects)
+            c = CHUNK(0,0 + i,30.0, 7.5, "src/textures/grass", global_gameobjects)
             APPEND chunks c
         }
 
+        FOR c IN chunks {
+            ADD c
+        }
+    }
+    DEFINE SCENE("Escena 2", WIDTH_CHUNK, LENGH_CHUNK) {
+        INT n = 5
+        LIST<CHUNK> chunks
+        FOR i FROM 0 TO 10 {
+            APPEND chunks CHUNK(0 + i,0,15.0, 10.0, "src/textures/mountain", global_gameobjects)
+        }
         FOR c IN chunks {
             ADD c
         }
