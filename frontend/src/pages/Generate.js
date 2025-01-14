@@ -7,8 +7,8 @@ const Generate = () => {
     const handleGenerateClick = () => {
         // Obtener el código del componente CodeEditor
         let code = document.querySelector(".code-editor-textarea").value;
-        console.log(code);
-        // Send the code to the backend for processing
+
+        // Endpoint de la API /generate_project
         fetch("http://localhost:8000/generate_project", {
             method: "POST",
             headers: {
@@ -20,18 +20,24 @@ const Generate = () => {
         })
             .then(response => {
                 // Verificar si la respuesta es exitosa
-                if (response.ok) {
-                    return response.blob(); // Convertir la respuesta a un blob (archivo)
-                } else {
+                if (!response.ok) {
                     throw new Error("Error al generar el proyecto");
                 }
+
+                // Obtener el nombre del archivo desde los encabezados
+                const contentDisposition = response.headers.get("Content-Disposition");
+                const fileNameMatch = contentDisposition && contentDisposition.match(/filename="([^"]+)"/);
+                const fileName = fileNameMatch ? fileNameMatch[1] : "project.zip";
+
+                // Convertir la respuesta a blob
+                return response.blob().then(blob => ({ blob, fileName }));
             })
-            .then(blob => {
+            .then(({ blob, fileName }) => {
                 // Crear un enlace para descargar el archivo
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "project.zip"; // Nombre sugerido para el archivo
+                a.download = fileName; // Usar el nombre del archivo obtenido
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
@@ -40,8 +46,8 @@ const Generate = () => {
             .catch(error => {
                 console.error("Error:", error);
             });
-
     };
+
 
     return (
         <div className="page-container">
