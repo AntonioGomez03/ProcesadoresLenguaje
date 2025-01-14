@@ -40,5 +40,5 @@ cd python/src
 antlr4 -Dlanguage=Python3 -o parser gec_lexer.g4
 antlr4 -Dlanguage=Python3 -o parser gec_parser.g4 -visitor
 cd ../..
-python3 python/src/test_parser_visitor.py examples/example1.gec
+python3 python/src/test_parser_visitor.py examples/example2_correct.gec
 ```
