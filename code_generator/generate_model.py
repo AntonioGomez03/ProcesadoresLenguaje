@@ -8,10 +8,10 @@ import zipfile
     Method name: main
     Function: itera sobre cada "scene" para generar su script
 '''
-def main():
+def generate_model(path):
     # Directorio del script
     current_dir = os.path.dirname(__file__) 
-    json_path = os.path.join(current_dir, '../examples/lenguaje_intermedio.json')
+    json_path = os.path.join(current_dir, '..', path)
     
     # Cargar archivo JSON 
     with open(json_path, 'r') as file:
@@ -59,6 +59,8 @@ def main():
         print(f"La carpeta '{output_folder}' no existe.")
     except Exception as e:
         print(f"Error al eliminar la carpeta: {e}")
+    
+    return zip_path
 
 
 
@@ -259,4 +261,4 @@ def add_gameobjects_to_chunk(cs_content, chunk, pos_x, pos_y,  pos_x_end, pos_y_
 
 
 if __name__ == "__main__":
-    main()
+    generate_model('examples/lenguaje_intermedio.json')
