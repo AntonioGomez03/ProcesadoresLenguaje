@@ -49,8 +49,13 @@ public class GameObject {
     }
 
     public Map<String, Object> toMap() {
+        
         Map<String, Object> data = new HashMap<>();
-        data.put("model", model);
+        String cleanModel = model;
+        if (model.startsWith("\"") && model.endsWith("\"")) {
+          cleanModel = model.substring(1, model.length() - 1);
+        }
+        data.put("model", cleanModel);
         data.put("density", density);
         if (scale != -1234232) {
             data.put("scale", scale);

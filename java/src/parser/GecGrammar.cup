@@ -121,10 +121,30 @@ program ::= define_setup:variables define_world:world_json
 define_setup ::= DEFINE SETUP LPAREN RPAREN LBRACE statement_list:ls RBRACE 
                 | DEFINE SETUP LPAREN RPAREN LBRACE RBRACE; // Vacío
 
-statement_list ::= statement statement_list
-                | statement:st;
+statement_list ::= statement:st statement_list:sl
+                   {:
+                   if ( st != null) {
+                    if (st instanceof String) 
+                    st = (Chunk) symbolTable.getValue((String) st);
+                    ((ArrayList) sl).add((Chunk)st);
+                    }
+                    RESULT = sl; 
+                   :}
+                 | statement:st
+                   {:
+                   ArrayList<Chunk> chunks = new ArrayList<>();
+                    if (st != null) {
+                        if (st instanceof String) 
+                        st =  (Chunk) symbolTable.getValue((String) st);
+                        chunks.add((Chunk) st);
+                    } 
+                     RESULT = chunks;
+                    
+                   :};
 
-define_world ::=  DEFINE WORLD LPAREN id_or_string_literal:str RPAREN LBRACE define_scene_list:scene_list RBRACE {: world = new World( (String) str, (ArrayList) scene_list); RESULT = world.toJson(); :}
+
+define_world ::=  DEFINE WORLD LPAREN id_or_string_literal:str RPAREN LBRACE define_scene_list:scene_list RBRACE {: 
+                    world = new World( (String) str, (ArrayList) scene_list);  symbolTable.printTable(); RESULT = world.toJson(); :}
                 | DEFINE WORLD LPAREN id_or_string_literal:str RPAREN LBRACE RBRACE // Esto es el mundo vacío
                 {:world = new World((String)str);
                     RESULT = world.toJson(); 
@@ -150,6 +170,7 @@ define_scene ::= DEFINE SCENE LPAREN id_or_string_literal:str COMMA id_or_int_li
                 }
 
                 Scene scene = new Scene((String) str, (Integer) nt_1, (Integer) nt_2);
+                scene.addChunks((ArrayList) st_list);
                 RESULT = scene; :}
 
                 | DEFINE SCENE LPAREN id_or_string_literal:str COMMA id_or_int_literal:nt_1 COMMA id_or_int_literal:nt_2 RPAREN LBRACE RBRACE
@@ -171,17 +192,24 @@ define_scene ::= DEFINE SCENE LPAREN id_or_string_literal:str COMMA id_or_int_li
                 Scene scene = new Scene((String) str, (Integer) nt_1, (Integer) nt_2);
                 RESULT = scene;:}; 
 
-statement ::= assignment:as {:System.out.println(as);:}
+
+statement ::= assignment:as {: //System.out.println(as);:}
 	| define_list:dfl {::}
-	| append_statement:app {: System.out.println("It has been append");:}
+	| append_statement:app {: // System.out.println("It has been append");:}
 	| for_loop_number:for_number 
 	| for_loop_list:for_list 
-	| declaration:declare {: System.out.println(declare);:}
-	| add_statement:add {::}
+	| declaration:declare {: //System.out.println(declare);:}
+	| add_statement:add {: RESULT = add;:} // Paso add
     | error {: parser.report_error("Error en sintaxis, la sentencia no es valida",null); :};
 
 chunck_constuctor ::= CHUNK LPAREN id_or_int_literal:int_1 COMMA id_or_int_literal:int_2 COMMA id_or_float_literal:fl_1 COMMA id_or_float_literal:fl_2 COMMA id_or_string_literal:str COMMA id_or_array: ar RPAREN
                     {:
+                        if (str instanceof String) {
+                        str = (String) str;
+                        } else {
+                        str = (String) symbolTable.getValue((String) str);
+                        }
+
                          if (int_1 instanceof Integer) {
                         int_1 = (Integer) int_1;
                         } else {
@@ -205,57 +233,63 @@ chunck_constuctor ::= CHUNK LPAREN id_or_int_literal:int_1 COMMA id_or_int_liter
                         } else {
                         fl_2 = (Float) symbolTable.getValue((String) fl_2);
                         }
-
-                        // Validar y convertir str
-                         if (str instanceof String) {
-                            str = (String) str;
-                            } else {
-                            str = (String) symbolTable.getValue((String) str);
-                            }
-
                     // Validar y convertir ar
                     if (ar instanceof ArrayList) {
                     ar = (ArrayList) ar;
                     } else {
                     ar = (ArrayList) symbolTable.getValue((String) ar);
                     } 
+                    ArrayList<String> string_array = new ArrayList<>();
+                    ArrayList<GameObject> game_objects_array = new ArrayList<>();
+                    string_array = (ArrayList<String>) ar;
+                   
+                    for(String el : string_array ) {
+                    	GameObject object =  (GameObject) symbolTable.getValue((String) el);
+                    	//System.out.println(object);
+                    	if (object instanceof GameObject) {
+                    		 game_objects_array.add(((GameObject)object));
+                    	} else {
+                    		System.err.println("El identificador '" + el + "' no corresponde a un GameObject válido.");
+                    	}
+                    }
                     
-                    Chunk chunk = new Chunk((Integer) int_1, (Integer) int_2, (Float) fl_1, (Float) fl_2, (String) str, (ArrayList) ar); 
+                    Chunk chunk = new Chunk((Integer) int_1, (Integer) int_2, (Float) fl_1, (Float) fl_2, (String) str, (ArrayList) game_objects_array); 
                         RESULT = chunk; :};
 
 gameobject_constructor ::= GAMEOBJECT LPAREN id_or_string_literal:str COMMA id_or_int_literal:int_1 COMMA id_or_float_literal:fl_1 COMMA id_or_float_literal: fl_2 RPAREN
-                            {:// Validar y convertir str
+                            
+                            {:
                                 if (str instanceof String) {
                                     str = (String) str;
                                 } else {
                                     str = (String) symbolTable.getValue((String) str);
                                 }
 
-                                // Validar y convertir int_1
                                 if (int_1 instanceof Integer) {
                                     int_1 = (Integer) int_1;
                                 } else {
                                     int_1 = (Integer) symbolTable.getValue((String) int_1);
                                 }
 
-                                // Validar y convertir fl_1
                                 if (fl_1 instanceof Float) {
                                     fl_1 = (Float) fl_1;
                                 } else {
                                     fl_1 = (Float) symbolTable.getValue((String) fl_1);
                                 }
-
+                                
                                 // Validar y convertir fl_2
                                 if (fl_2 instanceof Float) {
                                     fl_2 = (Float) fl_2;
                                 } else {
                                     fl_2 = (Float) symbolTable.getValue((String) fl_2);
-                                } 
-                            GameObject gameObject = new GameObject ((String) str,  (Integer) int_1, (Float) fl_1, (Float) fl_2 );
+                                }
+
+                            GameObject gameObject = new GameObject ((String) str, (Integer) int_1, (Float) fl_1, (Float) fl_2);
                             RESULT = gameObject; :}
 
                         |  GAMEOBJECT LPAREN id_or_string_literal:str COMMA id_or_int_literal:int_1 COMMA id_or_float_literal:fl_1 RPAREN
-                            {:  // Validar y convertir str
+                            {:  
+
                                 if (str instanceof String) {
                                     str = (String) str;
                                 } else {
@@ -269,27 +303,36 @@ gameobject_constructor ::= GAMEOBJECT LPAREN id_or_string_literal:str COMMA id_o
                                     int_1 = (Integer) symbolTable.getValue((String) int_1);
                                 }
 
-                                // Validar y convertir fl_1
                                 if (fl_1 instanceof Float) {
                                     fl_1 = (Float) fl_1;
                                 } else {
                                     fl_1 = (Float) symbolTable.getValue((String) fl_1);
                                 }
                             
-                            GameObject gameObject = new GameObject ((String) str,  (Integer) int_1, (Float) fl_1) ; 
+                            GameObject gameObject = new GameObject ((String) str, (Integer) int_1, (Float) fl_1) ; 
                                RESULT = gameObject; :}; 
 
-define_list ::= LIST LT CHUNK GT ID:identifier ASSIGN array:arr {::}
-                | LIST LT GAMEOBJECT GT ID:identifier ASSIGN array:arr {::}
-                | ID ASSIGN array:arr {::}; 
+define_list ::= LIST LT CHUNK GT ID:identifier ASSIGN array:arr {:
+                symbolTable.defineIdentifier(identifier, "LIST<CHUNK>");
+                   symbolTable.setValue(identifier, arr ,"LIST<CHUNK>");:}
+                | LIST LT GAMEOBJECT GT ID:identifier ASSIGN array:arr {: symbolTable.defineIdentifier(identifier, "LIST<GAMEOBJECT>");
+                    symbolTable.setValue(identifier, arr ,"LIST<GAMEOBJECT>");:}
+                | ID:identifier ASSIGN array:arr {:symbolTable.updateValue(identifier, arr);:}; 
 
 
 array ::= LSQUARE chunck_constuctor:constructor rest_array:rest RSQUARE {:((ArrayList) rest).add((Chunk)constructor);  RESULT = rest; :}
         | LSQUARE gameobject_constructor:constructor rest_array:rest RSQUARE {:((ArrayList) rest).add((GameObject)constructor); RESULT = rest;:}
-        | LSQUARE ID:identifier rest_array:rest RSQUARE {:((ArrayList) rest).add((Object) rest); RESULT = rest;:}
-        | LSQUARE chunck_constuctor:constructor RSQUARE {: RESULT = constructor; :}
-        | LSQUARE gameobject_constructor:game_cons RSQUARE {: RESULT = game_cons ;:}
-        | LSQUARE ID:identifier RSQUARE {: RESULT = identifier ;:}
+        | LSQUARE ID:identifier rest_array:rest RSQUARE {: ((ArrayList) rest).add((Object) identifier); RESULT = rest;:}
+        | LSQUARE chunck_constuctor:constructor RSQUARE {: ArrayList<Chunk> chunk =  
+                                                        new ArrayList<>(); 
+                                                        chunk.add((Chunk) constructor);
+                                                        RESULT = chunk; :}
+        | LSQUARE gameobject_constructor:game_cons RSQUARE {: ArrayList<GameObject> game_objc = new ArrayList<>(); 
+                                                        game_objc.add((GameObject) game_cons);
+                                                        RESULT = game_objc;:}
+        | LSQUARE ID:identifier RSQUARE {: ArrayList<Object> ob = new ArrayList<>(); 
+                                                       ob.add((Object) identifier); 
+                                                       RESULT = ob; :}
         | LSQUARE RSQUARE  // Cuando está vacío
         | error {:parser.report_error("Error en la sintaxis, la construccion del array no es correcta", null); :};
 
@@ -343,6 +386,7 @@ assignment ::=
     | ID:identifier ASSIGN chunck_constuctor:chunck_cons {: symbolTable.updateValueType(identifier, "CHUNK", chunck_cons); 
     RESULT = chunck_cons; :}
     | GAMEOBJECT ID:identifier ASSIGN gameobject_constructor:gameobject_cons {:
+         symbolTable.defineIdentifier(identifier, "GAMEOBJECT");
         symbolTable.setValue(identifier, gameobject_cons, "GAMEOBJECT"); RESULT = gameobject_cons;:}
     | ID:identifier ASSIGN gameobject_constructor: gameobject_cons {: symbolTable.updateValueType(identifier, "GAMEOBJECT", gameobject_cons);
     RESULT = gameobject_cons; :};

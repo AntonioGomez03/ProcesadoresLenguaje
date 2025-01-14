@@ -28,6 +28,7 @@ public class World {
     //         throw new IllegalArgumentException("Scene with the name \"" + scene.getName() + "\" already exists.");
     //     }
     // }
+    
 
     // Get all scenes
     public List<Scene> getScenes() {

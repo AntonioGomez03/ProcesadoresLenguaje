@@ -512,7 +512,20 @@ class CUP$parser$actions {
           case 4: // statement_list ::= statement statement_list 
             {
               Object RESULT =null;
-
+		int stleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int stright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object st = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int slleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int slright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object sl = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+                   if ( st != null) {
+                    if (st instanceof String) 
+                    st = (Chunk) symbolTable.getValue((String) st);
+                    ((ArrayList) sl).add((Chunk)st);
+                    }
+                    RESULT = sl; 
+                   
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement_list",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -524,7 +537,16 @@ class CUP$parser$actions {
 		int stleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int stright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object st = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-
+		
+                   ArrayList<Chunk> chunks = new ArrayList<>();
+                    if (st != null) {
+                        if (st instanceof String) 
+                        st =  (Chunk) symbolTable.getValue((String) st);
+                        chunks.add((Chunk) st);
+                    } 
+                     RESULT = chunks;
+                    
+                   
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement_list",5, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -539,7 +561,8 @@ class CUP$parser$actions {
 		int scene_listleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int scene_listright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object scene_list = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 world = new World( (String) str, (ArrayList) scene_list); RESULT = world.toJson(); 
+		 
+                    world = new World( (String) str, (ArrayList) scene_list);  symbolTable.printTable(); RESULT = world.toJson(); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("define_world",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -605,18 +628,6 @@ class CUP$parser$actions {
 		Object st_list = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		 
 
-//                String resolvedStr;
-//
-//            // Verificar si es un identificador o un literal
-//            if (((Object[]) str)[0].equals("ID")) {
-//            String identifier = (String) ((Object[]) str)[1];
-//            resolvedStr = (String) symbolTable.getValue(identifier);
-//        } else {
-//            // Es un literal de cadena
-//            resolvedStr = (String) ((Object[]) str)[1];
-//        }	
-//            System.out.println(resolvedStr);
-
                 if (nt_1 instanceof Integer) {
                 	nt_1 = (Integer) nt_1;
                 }else{
@@ -629,6 +640,7 @@ class CUP$parser$actions {
                 }
 
                 Scene scene = new Scene((String) str, (Integer) nt_1, (Integer) nt_2);
+                scene.addChunks((ArrayList) st_list);
                 RESULT = scene; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("define_scene",3, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-11)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -675,7 +687,7 @@ class CUP$parser$actions {
 		int asleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int asright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object as = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		System.out.println(as);
+		 //System.out.println(as);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -699,7 +711,7 @@ class CUP$parser$actions {
 		int appleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int appright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object app = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 System.out.println("It has been append");
+		 // System.out.println("It has been append");
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -735,7 +747,7 @@ class CUP$parser$actions {
 		int declareleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int declareright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object declare = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 System.out.println(declare);
+		 //System.out.println(declare);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -747,7 +759,7 @@ class CUP$parser$actions {
 		int addleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int addright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object add = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		
+		 RESULT = add;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statement",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -784,6 +796,12 @@ class CUP$parser$actions {
 		int arright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object ar = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
+                        if (str instanceof String) {
+                        str = (String) str;
+                        } else {
+                        str = (String) symbolTable.getValue((String) str);
+                        }
+
                          if (int_1 instanceof Integer) {
                         int_1 = (Integer) int_1;
                         } else {
@@ -807,22 +825,27 @@ class CUP$parser$actions {
                         } else {
                         fl_2 = (Float) symbolTable.getValue((String) fl_2);
                         }
-
-                        // Validar y convertir str
-                         if (str instanceof String) {
-                            str = (String) str;
-                            } else {
-                            str = (String) symbolTable.getValue((String) str);
-                            }
-
                     // Validar y convertir ar
                     if (ar instanceof ArrayList) {
                     ar = (ArrayList) ar;
                     } else {
                     ar = (ArrayList) symbolTable.getValue((String) ar);
                     } 
+                    ArrayList<String> string_array = new ArrayList<>();
+                    ArrayList<GameObject> game_objects_array = new ArrayList<>();
+                    string_array = (ArrayList<String>) ar;
+                   
+                    for(String el : string_array ) {
+                    	GameObject object =  (GameObject) symbolTable.getValue((String) el);
+                    	//System.out.println(object);
+                    	if (object instanceof GameObject) {
+                    		 game_objects_array.add(((GameObject)object));
+                    	} else {
+                    		System.err.println("El identificador '" + el + "' no corresponde a un GameObject válido.");
+                    	}
+                    }
                     
-                    Chunk chunk = new Chunk((Integer) int_1, (Integer) int_2, (Float) fl_1, (Float) fl_2, (String) str, (ArrayList) ar); 
+                    Chunk chunk = new Chunk((Integer) int_1, (Integer) int_2, (Float) fl_1, (Float) fl_2, (String) str, (ArrayList) game_objects_array); 
                         RESULT = chunk; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("chunck_constuctor",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-13)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -844,34 +867,33 @@ class CUP$parser$actions {
 		int fl_2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int fl_2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object fl_2 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		// Validar y convertir str
+		
                                 if (str instanceof String) {
                                     str = (String) str;
                                 } else {
                                     str = (String) symbolTable.getValue((String) str);
                                 }
 
-                                // Validar y convertir int_1
                                 if (int_1 instanceof Integer) {
                                     int_1 = (Integer) int_1;
                                 } else {
                                     int_1 = (Integer) symbolTable.getValue((String) int_1);
                                 }
 
-                                // Validar y convertir fl_1
                                 if (fl_1 instanceof Float) {
                                     fl_1 = (Float) fl_1;
                                 } else {
                                     fl_1 = (Float) symbolTable.getValue((String) fl_1);
                                 }
-
+                                
                                 // Validar y convertir fl_2
                                 if (fl_2 instanceof Float) {
                                     fl_2 = (Float) fl_2;
                                 } else {
                                     fl_2 = (Float) symbolTable.getValue((String) fl_2);
-                                } 
-                            GameObject gameObject = new GameObject ((String) str,  (Integer) int_1, (Float) fl_1, (Float) fl_2 );
+                                }
+
+                            GameObject gameObject = new GameObject ((String) str, (Integer) int_1, (Float) fl_1, (Float) fl_2);
                             RESULT = gameObject; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("gameobject_constructor",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -890,7 +912,8 @@ class CUP$parser$actions {
 		int fl_1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int fl_1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object fl_1 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		  // Validar y convertir str
+		  
+
                                 if (str instanceof String) {
                                     str = (String) str;
                                 } else {
@@ -904,14 +927,13 @@ class CUP$parser$actions {
                                     int_1 = (Integer) symbolTable.getValue((String) int_1);
                                 }
 
-                                // Validar y convertir fl_1
                                 if (fl_1 instanceof Float) {
                                     fl_1 = (Float) fl_1;
                                 } else {
                                     fl_1 = (Float) symbolTable.getValue((String) fl_1);
                                 }
                             
-                            GameObject gameObject = new GameObject ((String) str,  (Integer) int_1, (Float) fl_1) ; 
+                            GameObject gameObject = new GameObject ((String) str, (Integer) int_1, (Float) fl_1) ; 
                                RESULT = gameObject; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("gameobject_constructor",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -928,6 +950,8 @@ class CUP$parser$actions {
 		int arrright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object arr = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+                symbolTable.defineIdentifier(identifier, "LIST<CHUNK>");
+                   symbolTable.setValue(identifier, arr ,"LIST<CHUNK>");
               CUP$parser$result = parser.getSymbolFactory().newSymbol("define_list",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -942,7 +966,8 @@ class CUP$parser$actions {
 		int arrleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int arrright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object arr = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		
+		 symbolTable.defineIdentifier(identifier, "LIST<GAMEOBJECT>");
+                    symbolTable.setValue(identifier, arr ,"LIST<GAMEOBJECT>");
               CUP$parser$result = parser.getSymbolFactory().newSymbol("define_list",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -951,10 +976,13 @@ class CUP$parser$actions {
           case 25: // define_list ::= ID ASSIGN array 
             {
               Object RESULT =null;
+		int identifierleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int identifierright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		String identifier = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
 		int arrleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int arrright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object arr = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		
+		symbolTable.updateValue(identifier, arr);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("define_list",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -999,7 +1027,7 @@ class CUP$parser$actions {
 		int restleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int restright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object rest = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		((ArrayList) rest).add((Object) rest); RESULT = rest;
+		 ((ArrayList) rest).add((Object) identifier); RESULT = rest;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("array",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1011,7 +1039,10 @@ class CUP$parser$actions {
 		int constructorleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int constructorright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object constructor = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = constructor; 
+		 ArrayList<Chunk> chunk =  
+                                                        new ArrayList<>(); 
+                                                        chunk.add((Chunk) constructor);
+                                                        RESULT = chunk; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("array",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1023,7 +1054,9 @@ class CUP$parser$actions {
 		int game_consleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int game_consright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object game_cons = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = game_cons ;
+		 ArrayList<GameObject> game_objc = new ArrayList<>(); 
+                                                        game_objc.add((GameObject) game_cons);
+                                                        RESULT = game_objc;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("array",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1035,7 +1068,9 @@ class CUP$parser$actions {
 		int identifierleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int identifierright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String identifier = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = identifier ;
+		 ArrayList<Object> ob = new ArrayList<>(); 
+                                                       ob.add((Object) identifier); 
+                                                       RESULT = ob; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("array",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1357,6 +1392,7 @@ class CUP$parser$actions {
 		int gameobject_consright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object gameobject_cons = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+         symbolTable.defineIdentifier(identifier, "GAMEOBJECT");
         symbolTable.setValue(identifier, gameobject_cons, "GAMEOBJECT"); RESULT = gameobject_cons;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("assignment",14, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -1625,9 +1661,7 @@ class CUP$parser$actions {
 		int identifierleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int identifierright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String identifier = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 
-                            RESULT = new Object[] { "ID", identifier }; 
-                        
+		 RESULT = identifier; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("id_or_string_literal",21, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1639,10 +1673,7 @@ class CUP$parser$actions {
 		int strleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int strright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String str = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		
-                            // Elimina las comillas de los literales si es necesario
-                            RESULT = new Object[] { "STRING_LITERAL", str.substring(1, str.length() - 1) }; 
-                        
+		RESULT = str;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("id_or_string_literal",21, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

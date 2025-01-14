@@ -9,7 +9,7 @@ public class Scene {
     private String name;
     private int widthChunk;
     private int lengthChunk;
-    private List<Chunk> chunks;
+    private ArrayList<Chunk> chunks;
 
     // Constructor
     public Scene(String name, int widthChunk, int lengthChunk) {
@@ -27,7 +27,7 @@ public class Scene {
     }
 
     // Add multiple chunks
-    public void addChunks(List<Chunk> chunksToAdd) {
+    public void addChunks(ArrayList<Chunk> chunksToAdd) {
         for (Chunk chunk : chunksToAdd) {
             if (chunkIsValid(chunk)) {
                 addChunk(chunk);

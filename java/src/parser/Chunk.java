@@ -11,15 +11,15 @@ public class Chunk {
     private float scale;
     private float heightMultiplier;
     private String texture;
-    private List<GameObject> gameObjects;
+    private ArrayList<GameObject> gameObjects;
 
-    public Chunk(int posX, int posY, float scale, float heightMultiplier, String texture, List<GameObject> gameObjects) {
+    public Chunk(int posX, int posY, float scale, float heightMultiplier, String texture, ArrayList<GameObject> gameObjects) {
             this.posX = posX;
             this.posY = posY;
             this.scale = scale;
             this.heightMultiplier = heightMultiplier;
             this.texture = texture;
-            this.gameObjects = gameObjects != null ? gameObjects : new ArrayList<>();
+            this.gameObjects = gameObjects;
             }
 
     public int getPosX() {
@@ -45,11 +45,11 @@ public class Chunk {
             cleanTexture = texture.substring(1, texture.length() - 1);
         }
         data.put("texture", cleanTexture);
-        
-        List<Map<String, Object>> gameObjectsList = gameObjects.stream()
-                .map(GameObject::toMap) 
-                .collect(Collectors.toList());
-        data.put("gameobjects", gameObjectsList);
+        List<Map<String, Object>> gameObjectsList = new ArrayList<>();
+        for (GameObject gameobject : gameObjects) {
+            gameObjectsList.add(gameobject.toMap());
+        	}
+            data.put("gameobjects", gameObjectsList);
         return data;
     }
 }
