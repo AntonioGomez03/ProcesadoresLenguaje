@@ -21,7 +21,7 @@ DEFINE SETUP(){
 
     /* Ejemplo de CHUNK */
     CHUNK global_chunk =  CHUNK(0,0,20.0, 7.5, "src/textures/grass", global_objects)
-    }
+}
 
 
 /* Definición de escenas */
@@ -36,18 +36,35 @@ DEFINE WORLD("Mi Mundo"){
         LIST<GAMEOBJECT> objects = [object1, object2]
 
         /* Creacion de 10 chunks con arboles y rocas */
-
+        LIST<CHUNK> chunks
+		FOR i FROM 0 TO 10 {
+            CHUNK c = CHUNK(0,i,15.0, 10.0, "src/textures/mountain", objects)
+            APPEND chunks c
+        }
  
-
+        /* Añadir chunks */
+        FOR c IN chunks {
+            ADD c
+        } 
 
         /* Añadir un chunk global */
-        ADD global_chunk
+        // ADD global_chunk
 	}
 
     /* Definición de escena */
     DEFINE SCENE("Escena 2", WIDTH_CHUNK, LENGH_CHUNK){
         /* Definición de variables */
         INT n = 5
+        LIST<CHUNK> chunks
+
+        // Se prueba que no se pueden añadir datos de otro tipo
+        FOR i FROM 0 TO 10 {
+            APPEND chunks n
+        }
+
+        FOR c IN chunks {
+            ADD c
+        } 
 
         /* Añadir un chunk global */
         ADD global_chunk

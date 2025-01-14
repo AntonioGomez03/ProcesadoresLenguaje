@@ -1,0 +1,56 @@
+{
+    "world": {
+        "name": "Mi Mundo 2",
+        "scenes": [
+            {
+                "name": "Escena 1",
+                "width_chunk": 22,
+                "length_chunk": 15,
+                "chunks": [
+                    {
+                        "pos_x": 0,
+                        "pos_y": 0,
+                        "scale": 30.0,
+                        "height_multiplier": 7.5,
+                        "texture": "src/textures/grass",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 13,
+                                "scale": 6.0
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 1,
+                        "scale": 30.0,
+                        "height_multiplier": 7.5,
+                        "texture": "src/textures/grass",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 13,
+                                "scale": 6.0
+                            }
+                        ]
+                    },
+                    {
+                        "pos_x": 0,
+                        "pos_y": 2,
+                        "scale": 30.0,
+                        "height_multiplier": 7.5,
+                        "texture": "src/textures/grass",
+                        "gameobjects": [
+                            {
+                                "model": "src/models/tree",
+                                "density": 13,
+                                "scale": 6.0
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
