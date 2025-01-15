@@ -1,0 +1,35 @@
+/* Definición de objetos, variables y chunks globales */ 
+
+DEFINE SETUP(){
+    /* Definición de variables globales */
+    INT WIDTH_CHUNK = 20
+    WIDTH_CHUNK = 30
+    INT LENGH_CHUNK = 20 
+    LIST<GAMEOBJECT> global_gameobjects
+    GAMEOBJECT global_object1 = GAMEOBJECT("src/models/tree", 10, 2.0)
+    global_gameobjects = [global_object1]
+    CHUNK global_chunk1 = CHUNK(0,1,20.0, 7.5, "src/textures/water", global_gameobjects)
+    CHUNK global_chunk2 = CHUNK(0,2,20.0, 7.5, "src/textures/grass", global_gameobjects)
+    }
+    
+/* Definición de escenas */
+
+DEFINE WORLD("Mi Mundo"){
+    /* Definición de escena */
+	DEFINE SCENE("Escena 1", WIDTH_CHUNK, LENGH_CHUNK){
+	INT N = 5
+	ADD global_chunk1
+	CHUNK global_chunk3 = CHUNK(12332,2,20.0, 7.5, "src/textures/wind", global_gameobjects) 
+	ADD global_chunk2
+    }
+    DEFINE SCENE("Escena 2", WIDTH_CHUNK, 12){
+    ADD global_chunk1
+    }
+    DEFINE SCENE("Escena 3", WIDTH_CHUNK, LENGH_CHUNK){
+    FLOAT a = 2.12
+    GAMEOBJECT game_object_2 = GAMEOBJECT("src/models/tree", 10, 2.0)
+    LIST<GAMEOBJECT> objects =  [game_object_2]
+    CHUNK global_chunk4 = CHUNK(12332,2,a, 7.5, "src/textures/wave", objects) 
+    }
+    
+}

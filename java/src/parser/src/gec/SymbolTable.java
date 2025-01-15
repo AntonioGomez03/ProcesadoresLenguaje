@@ -76,17 +76,15 @@ public class SymbolTable {
     }
 
        public void printTable() {
-        System.out.println("+----------------+----------------+----------------+");
-        System.out.println("| Identifier     | Value          | Type           |");
-        System.out.println("+----------------+----------------+----------------+");
         for (Map.Entry<String, SymbolEntry> entry : table.entrySet()) {
+        	System.out.println();
             String identifier = entry.getKey();
             SymbolEntry symbolEntry = entry.getValue();
             String value = symbolEntry.getValue() != null ? symbolEntry.getValue().toString() : "null";
             String type = symbolEntry.getType();
-            System.out.printf("| %-14s | %-14s | %-14s |\n", identifier, value, type);
+            System.out.printf("%-14s %-14s  %-14s \n", identifier, value, type);
         }
-        System.out.println("+----------------+----------------+----------------+");
+        System.out.println();
     }
 
     // ToString method for debugging

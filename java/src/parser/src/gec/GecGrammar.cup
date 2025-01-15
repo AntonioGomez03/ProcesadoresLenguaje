@@ -194,7 +194,7 @@ define_scene ::= DEFINE SCENE LPAREN id_or_string_literal:str COMMA id_or_int_li
 
 
 statement ::= assignment:as {: //System.out.println(as);:}
-	| define_list:dfl {::}
+	| define_list:dfl {:  //System.out.println(dfl) :}
 	| append_statement:app {: // System.out.println("It has been append");:}
 	| for_loop_number:for_number 
 	| for_loop_list:for_list 
@@ -245,7 +245,6 @@ chunck_constuctor ::= CHUNK LPAREN id_or_int_literal:int_1 COMMA id_or_int_liter
                    
                     for(String el : string_array ) {
                     	GameObject object =  (GameObject) symbolTable.getValue((String) el);
-                    	//System.out.println(object);
                     	if (object instanceof GameObject) {
                     		 game_objects_array.add(((GameObject)object));
                     	} else {
@@ -353,23 +352,22 @@ rest_array ::= COMMA chunck_constuctor: chunck_cons rest_array:rest {: ((ArrayLi
                                                         RESULT = game_objc; :} ;
 
 
-// TODO
-append_statement ::= APPEND ID ID 
-                | APPEND ID gameobject_constructor
-                | APPEND ID chunck_constuctor;
+append_statement ::= APPEND ID:id ID:identifier {:System.out.println(identifier  + " se está añadiendo a la lista" + id );:}
+                | APPEND ID:id gameobject_constructor:cons {:System.out.println(cons + " se está añadiendo a la lista" + id );:}
+                | APPEND ID:id chunck_constuctor:cons {:System.out.println(cons + " se está añadiendo a la lista" + id );:};
+
 
 
 add_statement ::= ADD ID:identifier {: RESULT = identifier ;:}
                 | ADD chunck_constuctor:constructor {: RESULT = constructor; :}; 
 
 
-// TODO
-for_loop_number ::= FOR ID FROM INT_LITERAL:number_1 TO INT_LITERAL:number_2 LBRACE statement_list:ls RBRACE 
-                |   FOR ID FROM INT_LITERAL:number_1 TO INT_LITERAL:number_2 LBRACE RBRACE; 
+for_loop_number ::= FOR ID:id FROM INT_LITERAL:number_1 TO INT_LITERAL:number_2 LBRACE statement_list:ls RBRACE {:
+    System.out.println("Iteración de " +  id + " desde " + number_1 + " hasta " + number_2 ) ;:}
+                |   FOR ID:id FROM INT_LITERAL:number_1 TO INT_LITERAL:number_2 LBRACE RBRACE; 
 
-// TODO
-for_loop_list ::= FOR ID IN ID LBRACE statement_list RBRACE 
-                | FOR ID IN ID LBRACE RBRACE; 
+for_loop_list ::= FOR ID:id_1 IN ID:id_2 LBRACE statement_list:st_list RBRACE {: System.out.println("Iteración de " + id_1 + "en " + id_2);:} 
+                | FOR ID:id_1 IN ID:id_2 LBRACE RBRACE {:System.out.println("Iteración de " + id_1 + "en " + id_2 );:}; 
 assignment ::= 
     INT ID:identifier ASSIGN expression:expr {: symbolTable.defineIdentifier(identifier, "INT"); 
     symbolTable.setValue(identifier, expr, "INT");
@@ -391,18 +389,18 @@ assignment ::=
     | ID:identifier ASSIGN gameobject_constructor: gameobject_cons {: symbolTable.updateValueType(identifier, "GAMEOBJECT", gameobject_cons);
     RESULT = gameobject_cons; :};
 
-expression ::= expression_aux arithmetic_expression 
+expression ::= expression_aux:expression_aux arithmetic_expression:arithmetic
             | expression_aux:aux {:RESULT = aux;:};
 
-// TODO
-arithmetic_expression ::= OP_ARIT expression_aux arithmetic_expression
-                        | OP_ARIT expression_aux;
+
+arithmetic_expression ::= OP_ARIT:op_arit expression_aux:expression arithmetic_expression:arithmetic
+                        | OP_ARIT:op_arit expression_aux:expression {:System.out.println(expression + "tiene la operación de  op_arit" );:};
 
 expression_aux ::= STRING_LITERAL:str {:RESULT = str ;:}
                 | INT_LITERAL:nt {:RESULT = nt.intValue();:} 
                 | FLOAT_LITERAL:fl {:RESULT = fl.floatValue();:} 
                 | ID:identifier  {:RESULT = identifier;:}
-                | LPAREN expression: expr RPAREN; 
+                | LPAREN expression:expr RPAREN {:RESULT = expr;:}; 
 
 declaration ::= INT ID:identifier {: symbolTable.defineIdentifier(identifier, "INT");  
                 RESULT = identifier;:}
@@ -417,10 +415,10 @@ declaration ::= INT ID:identifier {: symbolTable.defineIdentifier(identifier, "I
             symbolTable.defineIdentifier(identifier, "GAMEOBJECT");
             RESULT = identifier;:}
             | LIST LT CHUNK GT ID:identifier
-                {: symbolTable.defineIdentifier(identifier, "CHUNK");
+                {: symbolTable.defineIdentifier(identifier, "LIST<CHUNK>");
                 RESULT = identifier; :}
             | LIST LT GAMEOBJECT GT ID:identifier
-                {: symbolTable.defineIdentifier(identifier, "GAMEOBJECT");
+                {: symbolTable.defineIdentifier(identifier, "LIST<GAMEOBJECT>");
                  RESULT = identifier;:};   
 
 id_or_int_literal ::= ID:identifier  {: RESULT = identifier; :}
@@ -434,4 +432,3 @@ id_or_string_literal ::= ID:identifier {: RESULT = identifier; :}
 
 id_or_array ::= ID:identifier {: RESULT = identifier; :}
             | array:arr {:RESULT = arr;:}; 
-
